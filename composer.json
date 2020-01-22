@@ -1,0 +1,36 @@
+{
+    "name": "shader2k/search-indexer",
+    "description": "zero downtime reindex",
+    "type": "library",
+    "keywords": [
+        "laravel",
+        "elasticsearch",
+        "reindex"
+    ],
+    "authors": [
+        {
+            "name": "shader2k",
+            "email": "shader2k@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "extra": {
+    },
+    "license": "MIT",
+    "require": {
+        "php": "^7.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Shader2k\\SearchIndexer\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Shader2k\\SearchIndexer\\Test\\": "tests/"
+        }
+    }
+}
