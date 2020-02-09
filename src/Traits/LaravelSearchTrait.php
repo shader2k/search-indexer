@@ -7,9 +7,14 @@ namespace Shader2k\SearchIndexer\Traits;
 trait LaravelSearchTrait
 {
 
-    public function getDataFromModel($chunk): object
+    /**
+     * Получение данных из модели
+     * @param int $chunk
+     * @return object
+     */
+    public function getDataFromModel(int $chunk): object
     {
-        return $this->query()->select(array_merge(['id', $this->indexFields]))->paginate($chunk);
+        return $this->query()->select(array_merge(['id'], $this->indexFields))->paginate($chunk);
     }
 
 

@@ -20,13 +20,25 @@ class SearchIndexerService
         $this->chunk = 1;
     }
 
-    public function indexingModel(string $modelName): bool
+    /**
+     * Индексирование модели
+     * @param object $model
+     * @return bool
+     * @throws Exceptions\DriverException
+     * @throws \ReflectionException
+     */
+    public function indexingModel(object $model): bool
     {
-        $this->model = $modelName;
+        $this->model = $model;
         try {
-
-            while($this->getChunkOfDataFromModel($modelName)){
+            if($this->prepareIndex() === false){
+                throw new IndexingException('Ошибка индексации: Ошибка подготовки индекса.');
+            }
+            while($this->getChunkOfDataFromModel($model)){
                 $this->indexing();
+            }
+            if($this->deploymentIndex() === false){
+                throw new IndexingException('Ошибка индексации: Ошибка деплоя индекса.');
             }
         }catch (IndexingException $e){
             echo $e->getCode().' '.$e->getMessage();
@@ -36,9 +48,14 @@ class SearchIndexerService
         return true;
     }
 
-    protected function getChunkOfDataFromModel($modelName): bool
+    /**
+     * Получение порции данных из модели
+     * @param object $model
+     * @return bool
+     */
+    protected function getChunkOfDataFromModel(object $model): bool
     {
-        $chunk = $this->provider->getChunk($modelName, $this->chunk);
+        $chunk = $this->provider->getChunk($model, $this->chunk);
         if (empty($chunk['data'])) {
             return false;
         }
@@ -46,9 +63,34 @@ class SearchIndexerService
         return true;
     }
 
-    private function indexing(): bool
+    /**
+     * Индексирование
+     * @return bool
+     * @throws \ReflectionException
+     */
+    protected function indexing(): bool
     {
-        return $this->driver->indexingData($this->data);
+        return $this->driver->indexingData($this->data, $this->model);
+    }
+
+    /**
+     * Подготовка индекса
+     * @return bool
+     * @throws Exceptions\DriverException
+     */
+    protected function prepareIndex(): bool
+    {
+        return $this->driver->prepareIndex();
+    }
+
+    /**
+     * Завершающий шаг индексирования
+     * @return bool
+     * @throws Exceptions\DriverException
+     */
+    protected function deploymentIndex(): bool
+    {
+        return $this->driver->deploymentIndex();
     }
 
     public function setData(array $data): void
@@ -58,7 +100,7 @@ class SearchIndexerService
         }
     }
 
-    public function getData(): array
+    public function getData(): void
     {
         return $this->data;
     }

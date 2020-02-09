@@ -2,69 +2,57 @@
 
 namespace Tests;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
+use App\User;
 use Shader2k\SearchIndexer\Drivers\ElasticsearchDriver;
-use Shader2k\SearchIndexer\SearchIndexerService;
 use Shader2k\SearchIndexer\Traits\HelpersTrait;
-use Tests\TestCase;
 
 class ElasticsearchDriverTest extends TestCase
 {
     use HelpersTrait;
 
+    /**
+     * Тест индексирования пачки данных
+     * @throws \ReflectionException
+     */
     public function testPrepareDataBulk()
     {
-        $elasticsearchDriver = new ElasticsearchDriver();
-        $elasticsearchDriver->setModel('App\User');
         $rawData = [
             [
                 'id' => 5,
-                'name' => 'name1',
-                'email' => 'email@email.com'
+                'name' => 'John',
+                'email' => 'test@example.com'
+
             ],
             [
                 'id' => 1,
-                'name' => 'name2',
-                'email' => 'email2@example.com'
+                'name' => 'Alex',
+                'email' => 'example@example.com'
+
             ]
         ];
-        $prepareDataBulk = self::getProtectedMethod('prepareDataBulk', get_class($elasticsearchDriver));
-        $data = $prepareDataBulk->invokeArgs($elasticsearchDriver, [$rawData]);
-        $preparedData = [
-            "body" => [
-                   [
-                    "index" => [
-                        "_index" => "App\User_write",
-                        "_type" => "App\User",
-                        "_id" => 5
-                  ]
-                ],
-                [
-                    "name" => "name1",
-                    "email" => "email@email.com"
-                ],
-                [
-                    "index" =>[
-                    "_index" => "App\User_write",
-                    "_type" => "App\User",
-                    "_id" => 1
-                  ]
-                ],
-                [
-                    "name" => "name2",
-                    "email" => "email2@example.com"
-                ]
-              ]
+        $elasticsearchDriver = new ElasticsearchDriver();
+        $response = $elasticsearchDriver->indexingData($rawData, new User());
 
-        ];
-        $this->assertIsArray($data);
-        $this->assertEquals($data,$preparedData);
+        $this->assertTrue($response);
 
     }
 
+    /**
+     * Тест подготовки и деплоя индекса
+     * @throws \ReflectionException
+     * @throws \Shader2k\SearchIndexer\Exceptions\DriverException
+     */
+    public function testPrepareAndDeploymentIndex()
+    {
+        $elasticsearchDriver = new ElasticsearchDriver();
+        $model = new User();
+        $elasticsearchDriver->setModel($model);
+        $prepareResponse = $elasticsearchDriver->prepareIndex();
+        $deploymentResponse = $elasticsearchDriver->deploymentIndex();
+        $this->assertTrue($prepareResponse);
+        $this->assertTrue($deploymentResponse);
 
-
+    }
 
 
 }
