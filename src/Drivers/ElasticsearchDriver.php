@@ -37,12 +37,11 @@ class ElasticsearchDriver
      * @return bool
      * @throws \ReflectionException
      */
-    public function indexingData(array $rawData, object $model): bool
+    public function indexingData(array $rawData): bool
     {
         if (empty($rawData)) {//индексация окончена
             return true;
         }
-        $this->setModel($model);
         if (count($rawData) !== count($rawData, COUNT_RECURSIVE)) {
             $data = $this->dataPreparer->toBulk($rawData, $this->getModelParamsToArray());
             return $this->bulk($data);
@@ -54,14 +53,16 @@ class ElasticsearchDriver
 
     /**
      * Подготовка индекса
+     * @param object $model
      * @return bool
      * @throws DriverException
+     * @throws \ReflectionException
      */
-    public function prepareIndex(): bool
+    public function prepareIndex(object $model): bool
     {
+        $this->setModel($model);
         //старый индекс
         $this->coldIndexName = $this->getLatestIndexNameForModel();
-
         //новый индекс
         $this->hotIndexName = $this->createIndex();
         if ($this->hotIndexName === null) {
@@ -98,10 +99,13 @@ class ElasticsearchDriver
             return false;
         }
 
-        $deleteIndex = $this->deleteIndex($this->coldIndexName);
-        if ($deleteIndex === false) {
-            return false;
+        if($this->coldIndexName !== null){
+            $deleteIndex = $this->deleteIndex($this->coldIndexName);
+            if ($deleteIndex === false) {
+                return false;
+            }
         }
+
 
         return true;
     }
@@ -125,7 +129,6 @@ class ElasticsearchDriver
                 ];
             }
         }
-
         $params['body']['actions'][] = [
             'add' => ['index' => $indexName, 'alias' => $aliasName],
         ];
@@ -215,7 +218,7 @@ class ElasticsearchDriver
     public function createIndex(bool $postfix = false): ?string
     {
         if ($postfix === false) {
-            $postfix = '_' . time();
+            $postfix = '_'.microtime(true);
         }
         $params = [
             'index' => $this->indexName . $postfix,

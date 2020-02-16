@@ -34,7 +34,7 @@ class SearchIndexerService
             if($this->prepareIndex() === false){
                 throw new IndexingException('Ошибка индексации: Ошибка подготовки индекса.');
             }
-            while($this->getChunkOfDataFromModel($model)){
+            while($this->getChunkOfDataFromModel($this->model)){
                 $this->indexing();
             }
             if($this->deploymentIndex() === false){
@@ -56,10 +56,10 @@ class SearchIndexerService
     protected function getChunkOfDataFromModel(object $model): bool
     {
         $chunk = $this->provider->getChunk($model, $this->chunk);
-        if (empty($chunk['data'])) {
+        if (empty($chunk)) {
             return false;
         }
-        $this->setData($chunk['data']);
+        $this->setData($chunk);
         return true;
     }
 
@@ -70,17 +70,18 @@ class SearchIndexerService
      */
     protected function indexing(): bool
     {
-        return $this->driver->indexingData($this->data, $this->model);
+        return $this->driver->indexingData($this->getData());
     }
 
     /**
      * Подготовка индекса
      * @return bool
      * @throws Exceptions\DriverException
+     * @throws \ReflectionException
      */
     protected function prepareIndex(): bool
     {
-        return $this->driver->prepareIndex();
+        return $this->driver->prepareIndex($this->model);
     }
 
     /**
@@ -95,15 +96,14 @@ class SearchIndexerService
 
     public function setData(array $data): void
     {
-        if (empty($data) === false) {
            $this->data = $data;
-        }
     }
 
-    public function getData(): void
+    public function getData(): array
     {
         return $this->data;
     }
+
 
 
 

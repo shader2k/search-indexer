@@ -12,20 +12,7 @@ class IndexerTest extends TestCase
 {
     use HelpersTrait;
 
-    /**
-     * приведение данных в формат Elasticsearch
-     * @throws \ReflectionException
-     */
-    public function testPrepareDataForIndexing(): void
-    {
-        $searchIndexer = new SearchIndexerService(new EloquentProvider(), new ElasticsearchDriver());
-        $getChunkOfDataFromModel = self::getProtectedMethod('checkIndex', get_class($searchIndexer));
-        $chunk = $getChunkOfDataFromModel->invokeArgs($searchIndexer, [new User()]);
 
-        $this->assertTrue($chunk);
-        $this->assertIsArray($searchIndexer->getData());
-
-    }
 
     public function testGetDataFromModel(): void
     {
@@ -38,18 +25,16 @@ class IndexerTest extends TestCase
 
     }
 
-    public function testIndex(): void
+    public function testIndexingModel(): void
     {
         $searchIndexer = new SearchIndexerService(new EloquentProvider(), new ElasticsearchDriver());
         $data = [
             ['name' => 'John', 'email' => 'john@example.com'],
             ['name' => 'Artur', 'email' => 'artur@example.com']
         ];
-        $searchIndexer->setData($data);
-        $indexing = self::getProtectedMethod('indexing', get_class($searchIndexer));
-        $data = $indexing->invokeArgs($searchIndexer,[]);
-
-        $this->assertTrue($data);
+        $index = $searchIndexer->indexingModel(new User());
+        //todo тестирование в индексе elasticsearch
+        $this->assertTrue($index);
 
     }
 

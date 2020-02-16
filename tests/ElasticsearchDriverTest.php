@@ -11,10 +11,27 @@ class ElasticsearchDriverTest extends TestCase
     use HelpersTrait;
 
     /**
+     * Тест подготовки и деплоя индекса
+     * @throws \ReflectionException
+     * @throws \Shader2k\SearchIndexer\Exceptions\DriverException
+     */
+    public function testPrepareAndDeploymentIndex()
+    {
+        $elasticsearchDriver = new ElasticsearchDriver();
+        $model = new User();
+        $prepareResponse = $elasticsearchDriver->prepareIndex($model);
+        $deploymentResponse = $elasticsearchDriver->deploymentIndex();
+        $this->assertTrue($prepareResponse);
+        $this->assertTrue($deploymentResponse);
+
+    }
+
+    /**
      * Тест индексирования пачки данных
      * @throws \ReflectionException
+     * @throws \Shader2k\SearchIndexer\Exceptions\DriverException
      */
-    public function testPrepareDataBulk()
+    public function testIndexingDataBulk()
     {
         $rawData = [
             [
@@ -31,28 +48,15 @@ class ElasticsearchDriverTest extends TestCase
             ]
         ];
         $elasticsearchDriver = new ElasticsearchDriver();
-        $response = $elasticsearchDriver->indexingData($rawData, new User());
+        $elasticsearchDriver->prepareIndex(new User());
+        $response = $elasticsearchDriver->indexingData($rawData);
+        $elasticsearchDriver->deploymentIndex();
 
         $this->assertTrue($response);
 
     }
 
-    /**
-     * Тест подготовки и деплоя индекса
-     * @throws \ReflectionException
-     * @throws \Shader2k\SearchIndexer\Exceptions\DriverException
-     */
-    public function testPrepareAndDeploymentIndex()
-    {
-        $elasticsearchDriver = new ElasticsearchDriver();
-        $model = new User();
-        $elasticsearchDriver->setModel($model);
-        $prepareResponse = $elasticsearchDriver->prepareIndex();
-        $deploymentResponse = $elasticsearchDriver->deploymentIndex();
-        $this->assertTrue($prepareResponse);
-        $this->assertTrue($deploymentResponse);
 
-    }
 
 
 }
