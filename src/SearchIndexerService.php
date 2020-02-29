@@ -1,8 +1,9 @@
 <?php
+
 namespace Shader2k\SearchIndexer;
 
 use Dotenv\Dotenv;
-use Shader2k\SearchIndexer\Drivers\ElasticsearchDriver;
+use Shader2k\SearchIndexer\Drivers\DriverFactory;
 use Shader2k\SearchIndexer\Exceptions\IndexingException;
 use Shader2k\SearchIndexer\Providers\EloquentProvider;
 
@@ -15,13 +16,13 @@ class SearchIndexerService
     private $model;
     public $env;
 
-    public function __construct(EloquentProvider $provider, ElasticsearchDriver $driver)
+    public function __construct(EloquentProvider $provider)
     {
         $this->env = Dotenv::create(__DIR__);
         $this->env->load();
         $this->provider = $provider;
-        $this->driver = $driver;
-        $this->chunk = 1;
+        $this->driver = DriverFactory::create();
+        $this->chunk = 1; //todo env param
     }
 
     /**
@@ -35,17 +36,17 @@ class SearchIndexerService
     {
         $this->model = $model;
         try {
-            if($this->prepareIndex() === false){
+            if ($this->prepareIndex() === false) {
                 throw new IndexingException('Ошибка индексации: Ошибка подготовки индекса.');
             }
-            while($this->getChunkOfDataFromModel($this->model)){
+            while ($this->getChunkOfDataFromModel($this->model)) {
                 $this->indexing();
             }
-            if($this->deploymentIndex() === false){
+            if ($this->deploymentIndex() === false) {
                 throw new IndexingException('Ошибка индексации: Ошибка деплоя индекса.');
             }
-        }catch (IndexingException $e){
-            echo $e->getCode().' '.$e->getMessage();
+        } catch (IndexingException $e) {
+            echo $e->getCode() . ' ' . $e->getMessage();
             return false;
         }
 
@@ -100,15 +101,13 @@ class SearchIndexerService
 
     public function setData(array $data): void
     {
-           $this->data = $data;
+        $this->data = $data;
     }
 
     public function getData(): array
     {
         return $this->data;
     }
-
-
 
 
 }

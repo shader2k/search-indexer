@@ -5,7 +5,7 @@ namespace Tests;
 use App\User;
 use Elasticsearch\ClientBuilder;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Shader2k\SearchIndexer\Drivers\ElasticsearchDriver;
+use Shader2k\SearchIndexer\Drivers\Elasticsearch\ElasticsearchDriver;
 use Shader2k\SearchIndexer\Providers\EloquentProvider;
 use Shader2k\SearchIndexer\SearchIndexerService;
 use Shader2k\SearchIndexer\Traits\HelpersTrait;
@@ -30,7 +30,7 @@ class IndexerTest extends TestCase
 
     public function testIndexingModel(): void
     {
-        $searchIndexer = new SearchIndexerService(new EloquentProvider(), new ElasticsearchDriver());
+        $searchIndexer = new SearchIndexerService(new EloquentProvider());
 
         factory(User::class)->create(['name'=>'John', 'email' => 'john@example.com']);
         factory(User::class)->create();
@@ -52,7 +52,7 @@ class IndexerTest extends TestCase
         ];
 
         sleep(1);
-        $client = ClientBuilder::create()->setHosts([getenv('ELASTICSEARCH_HOST')])->build();
+        $client = ClientBuilder::create()->setHosts([env('ELASTICSEARCH_HOST')])->build();
         $response = $client->search($params);
         $this->assertEquals($response['hits']['hits'][0]['_source']['name'], 'John');
         $this->assertEquals($response['hits']['hits'][0]['_source']['email'], 'john@example.com');

@@ -3,7 +3,9 @@
 namespace Tests;
 
 use App\User;
-use Shader2k\SearchIndexer\Drivers\ElasticsearchDriver;
+use Elasticsearch\ClientBuilder;
+use Shader2k\SearchIndexer\DataPreparers\ElasticsearchDataPreparer;
+use Shader2k\SearchIndexer\Drivers\Elasticsearch\ElasticsearchDriver;
 use Shader2k\SearchIndexer\Traits\HelpersTrait;
 
 class ElasticsearchDriverTest extends TestCase
@@ -17,7 +19,9 @@ class ElasticsearchDriverTest extends TestCase
      */
     public function testPrepareAndDeploymentIndex()
     {
-        $elasticsearchDriver = new ElasticsearchDriver();
+        $dataPreparer = new ElasticsearchDataPreparer();
+        $client = ClientBuilder::create()->setHosts([getenv('ELASTICSEARCH_HOST')])->build();
+        $elasticsearchDriver = new ElasticsearchDriver($dataPreparer, $client);
         $model = new User();
         $prepareResponse = $elasticsearchDriver->prepareIndex($model);
         $deploymentResponse = $elasticsearchDriver->deploymentIndex();
@@ -47,7 +51,10 @@ class ElasticsearchDriverTest extends TestCase
 
             ]
         ];
-        $elasticsearchDriver = new ElasticsearchDriver();
+        $dataPreparer = new ElasticsearchDataPreparer();
+        //todo проверка на существование env параметра
+        $client = ClientBuilder::create()->setHosts([env('ELASTICSEARCH_HOST')])->build();
+        $elasticsearchDriver = new ElasticsearchDriver($dataPreparer, $client);
         $elasticsearchDriver->prepareIndex(new User());
         $response = $elasticsearchDriver->indexingData($rawData);
         $elasticsearchDriver->deploymentIndex();
@@ -55,8 +62,6 @@ class ElasticsearchDriverTest extends TestCase
         $this->assertTrue($response);
 
     }
-
-
 
 
 }

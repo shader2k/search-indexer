@@ -1,15 +1,15 @@
 <?php
 
 
-namespace Shader2k\SearchIndexer\Drivers;
+namespace Shader2k\SearchIndexer\Drivers\Elasticsearch;
 
 
 use Shader2k\SearchIndexer\DataPreparers\ElasticsearchDataPreparer;
+use Shader2k\SearchIndexer\Drivers\DriverContract;
 use Shader2k\SearchIndexer\Exceptions\DriverException;
-use Shader2k\SearchIndexer\Exceptions\IndexingException;
-use Elasticsearch\ClientBuilder;
+use Elasticsearch\Client;
 
-class ElasticsearchDriver
+class ElasticsearchDriver implements DriverContract
 {
     const POSTFIX_WRITE = '_write';
     const POSTFIX_READ  = '_read';
@@ -24,10 +24,10 @@ class ElasticsearchDriver
     private $coldIndexName;
     private $hotIndexName;
 
-    public function __construct()
+    public function __construct(ElasticsearchDataPreparer $dataPreparer, Client $client)
     {
-        $this->dataPreparer = new ElasticsearchDataPreparer();
-        $this->client = ClientBuilder::create()->setHosts([getenv('ELASTICSEARCH_HOST')])->build();
+        $this->dataPreparer = $dataPreparer;
+        $this->client = $client;
     }
 
     /**
@@ -99,7 +99,7 @@ class ElasticsearchDriver
             return false;
         }
 
-        if($this->coldIndexName !== null){
+        if ($this->coldIndexName !== null) {
             $deleteIndex = $this->deleteIndex($this->coldIndexName);
             if ($deleteIndex === false) {
                 return false;
@@ -215,10 +215,10 @@ class ElasticsearchDriver
      * @param bool $postfix
      * @return string|null
      */
-    public function createIndex(bool $postfix = false): ?string
+    private function createIndex(bool $postfix = false): ?string
     {
         if ($postfix === false) {
-            $postfix = '_'.microtime(true);
+            $postfix = '_' . microtime(true);
         }
         $params = [
             'index' => $this->indexName . $postfix,
@@ -304,6 +304,7 @@ class ElasticsearchDriver
                 return $index;
             }
         }
+        throw new DriverException('Не найден алиас: ' . $aliasName);
     }
 
     /**
@@ -345,9 +346,9 @@ class ElasticsearchDriver
 
     /**
      * Получить модель
-     * @return array
+     * @return object
      */
-    public function getModel(): array
+    public function getModel(): object
     {
         return $this->model;
     }

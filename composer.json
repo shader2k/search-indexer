@@ -26,6 +26,9 @@
         "phpunit/phpunit": "^8.0"
     },
     "autoload": {
+        "files": [
+            "src/Helpers/helpers.php"
+        ],
         "psr-4": {
             "Shader2k\\SearchIndexer\\": "src/"
         }

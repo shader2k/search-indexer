@@ -14,7 +14,7 @@ class ElasticsearchDataPreparer implements DataPreparerContract
      */
     public function toBulk(array $rawData, array $modelParams): array
     {
-        if(empty($rawData)){
+        if (empty($rawData)) {
             return [];
         }
         $preparedData = [];
