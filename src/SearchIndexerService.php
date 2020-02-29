@@ -1,6 +1,7 @@
 <?php
 namespace Shader2k\SearchIndexer;
 
+use Dotenv\Dotenv;
 use Shader2k\SearchIndexer\Drivers\ElasticsearchDriver;
 use Shader2k\SearchIndexer\Exceptions\IndexingException;
 use Shader2k\SearchIndexer\Providers\EloquentProvider;
@@ -12,9 +13,12 @@ class SearchIndexerService
     private $provider;
     private $driver;
     private $model;
+    public $env;
 
     public function __construct(EloquentProvider $provider, ElasticsearchDriver $driver)
     {
+        $this->env = Dotenv::create(__DIR__);
+        $this->env->load();
         $this->provider = $provider;
         $this->driver = $driver;
         $this->chunk = 1;

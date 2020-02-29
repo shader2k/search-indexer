@@ -27,7 +27,7 @@ class ElasticsearchDriver
     public function __construct()
     {
         $this->dataPreparer = new ElasticsearchDataPreparer();
-        $this->client = ClientBuilder::create()->build();
+        $this->client = ClientBuilder::create()->setHosts([getenv('ELASTICSEARCH_HOST')])->build();
     }
 
     /**

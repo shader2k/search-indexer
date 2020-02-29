@@ -4,6 +4,8 @@
 namespace Shader2k\SearchIndexer\Providers;
 
 
+use App\User;
+
 class EloquentProvider
 {
     private $nextPage = 1;
