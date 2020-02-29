@@ -4,7 +4,15 @@ namespace Shader2k\SearchIndexer\Drivers;
 
 interface DriverFactoryContract
 {
-    public static function create();
+    /**
+     * Фабричный метод
+     * @return DriverContract
+     */
+    public static function create(): DriverContract;
 
-    public function getDriver();
+    /**
+     * Получение экземпляра драйвера
+     * @return DriverContract
+     */
+    public function getDriver(): DriverContract;
 }

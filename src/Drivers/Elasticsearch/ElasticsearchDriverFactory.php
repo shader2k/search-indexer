@@ -12,6 +12,10 @@ use Shader2k\SearchIndexer\Drivers\DriverFactory;
 class ElasticsearchDriverFactory extends DriverFactory
 {
 
+    /**
+     * Получение экземпляра драйвера
+     * @return DriverContract
+     */
     public function getDriver(): DriverContract
     {
         $dataPreparer = new ElasticsearchDataPreparer();
