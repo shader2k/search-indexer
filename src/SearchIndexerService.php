@@ -3,25 +3,26 @@
 namespace Shader2k\SearchIndexer;
 
 use Dotenv\Dotenv;
-use Shader2k\SearchIndexer\Drivers\DriverFactory;
+use Shader2k\SearchIndexer\Drivers\DriverManager;
 use Shader2k\SearchIndexer\Exceptions\IndexingException;
 use Shader2k\SearchIndexer\Providers\EloquentProvider;
 
 class SearchIndexerService
 {
+    public $env;
     private $chunk;
     private $data;
     private $provider;
-    private $driver;
+    private $driverManager;
     private $model;
-    public $env;
+    private $driver = null;
 
-    public function __construct(EloquentProvider $provider)
+    public function __construct(EloquentProvider $provider, DriverManager $driverManager)
     {
         $this->env = Dotenv::create(__DIR__);
         $this->env->load();
         $this->provider = $provider;
-        $this->driver = DriverFactory::create();
+        $this->driverManager = $driverManager;
         $this->chunk = 1; //todo env param
     }
 
@@ -47,10 +48,22 @@ class SearchIndexerService
             }
         } catch (IndexingException $e) {
             echo $e->getCode() . ' ' . $e->getMessage();
+            $this->resetSettings();
             return false;
         }
-
+        $this->resetSettings();
         return true;
+    }
+
+    /**
+     * Подготовка индекса
+     * @return bool
+     * @throws Exceptions\DriverException
+     * @throws \ReflectionException
+     */
+    protected function prepareIndex(): bool
+    {
+        return $this->driverManager->getDriver($this->driver)->prepareIndex($this->model);
     }
 
     /**
@@ -72,21 +85,21 @@ class SearchIndexerService
      * Индексирование
      * @return bool
      * @throws \ReflectionException
+     * @throws Exceptions\DriverException
      */
     protected function indexing(): bool
     {
-        return $this->driver->indexingData($this->getData());
+        return $this->driverManager->getDriver($this->driver)->indexingData($this->getData());
     }
 
-    /**
-     * Подготовка индекса
-     * @return bool
-     * @throws Exceptions\DriverException
-     * @throws \ReflectionException
-     */
-    protected function prepareIndex(): bool
+    public function getData(): array
     {
-        return $this->driver->prepareIndex($this->model);
+        return $this->data;
+    }
+
+    public function setData(array $data): void
+    {
+        $this->data = $data;
     }
 
     /**
@@ -96,17 +109,17 @@ class SearchIndexerService
      */
     protected function deploymentIndex(): bool
     {
-        return $this->driver->deploymentIndex();
+        return $this->driverManager->getDriver($this->driver)->deploymentIndex();
     }
 
-    public function setData(array $data): void
+    public function resetSettings(): void
     {
-        $this->data = $data;
+        $this->driver = null;
     }
 
-    public function getData(): array
+    public function setDriver($driverName): void
     {
-        return $this->data;
+        $this->driver = $driverName;
     }
 
 
