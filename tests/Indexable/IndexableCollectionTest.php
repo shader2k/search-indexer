@@ -4,8 +4,6 @@ namespace Tests\Drivers;
 
 use App\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Shader2k\SearchIndexer\Drivers\DriverManager;
-use Shader2k\SearchIndexer\Drivers\Elasticsearch\ElasticsearchDriver;
 use Shader2k\SearchIndexer\Indexable\IndexableCollection;
 use Shader2k\SearchIndexer\Indexable\IndexableEntity;
 use Shader2k\SearchIndexer\Traits\HelpersTrait;

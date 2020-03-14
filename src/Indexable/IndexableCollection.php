@@ -4,8 +4,6 @@
 namespace Shader2k\SearchIndexer\Indexable;
 
 
-use Shader2k\SearchIndexer\Exceptions\IndexableException;
-
 class IndexableCollection implements IndexableCollectionContract
 {
 
