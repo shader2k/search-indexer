@@ -9,16 +9,16 @@ interface IndexableCollectionContract
 
     /**
      * indexableEntityContract constructor.
-     * @param IndaxableContract $item
+     * @param IndexableContract $item
      */
-    public function __construct(IndaxableContract ...$item);
+    public function __construct(IndexableContract ...$item);
 
     /**
      * Добавление в коллекцию
-     * @param IndaxableContract $item
+     * @param IndexableContract $item
      * @return $this
      */
-    public function push(IndaxableContract $item): void;
+    public function push(IndexableContract $item): void;
 
     /**
      * Проверка на пустоту коллеции
@@ -31,12 +31,6 @@ interface IndexableCollectionContract
      * @return $this
      */
     public function all();
-
-    /**
-     * Получение поискового драйвера
-     * @return string
-     */
-    public function getSearchDriver(): ?string;
 
 
     /**

@@ -4,34 +4,35 @@
 namespace Shader2k\SearchIndexer\DataPreparers;
 
 
+use Shader2k\SearchIndexer\Indexable\IndexableCollectionContract;
+use Shader2k\SearchIndexer\Indexable\indexableEntityContract;
+
 class ElasticsearchDataPreparer implements DataPreparerContract
 {
-
     /**
-     * @param array $rawData
+     * @param IndexableCollectionContract $collection
      * @param array $modelParams
      * @return array
      */
-    public function toBulk(array $rawData, array $modelParams): array
+    public function toBulk(IndexableCollectionContract $collection, array $modelParams): array
     {
-        if (empty($rawData)) {
+        if ($collection->isEmpty()) {
             return [];
         }
+
         $preparedData = [];
-        foreach ($rawData as $row) {
+        /** @var indexableEntityContract $item */
+        foreach ($collection as $item) {
             $preparedData['body'][] = [
                 'index' => [
                     '_index' => $modelParams['indexAliasWrite'],
                     '_type' => $modelParams['indexType'],
-                    '_id' => $row['id'],
+                    '_id' => $item->getIdentifier(),
                 ],
             ];
-            unset($row['id']);
-            $preparedData['body'][] = $row;
+            $preparedData['body'][] = $item->getData();
         }
 
         return $preparedData;
     }
-
-
 }

@@ -19,24 +19,17 @@ class IndexableEntityTest extends TestCase
     public function testSetIndexData(): void
     {
         $expected = [
-            'data' => [
-                'name' => 'John',
-                'email' => 'john@example.com'
-            ],
-            'identifier' => '1'
+            'name' => 'John',
+            'email' => 'john@example.com'
         ];
-        factory(User::class)->create(['name' => 'John', 'email' => 'john@example.com']);
-        $item = User::query()->first();
-
-        $indexableEntity = new IndexableEntity($item);
-        $data = $indexableEntity->getIndexData();
+        $user = factory(User::class)->make(['id' => '1', 'name' => 'John', 'email' => 'john@example.com']);
+        $indexableEntity = new IndexableEntity($user);
 
         $this->assertJsonStringEqualsJsonString(
             json_encode($expected),
-            json_encode($data)
+            json_encode($indexableEntity->getData())
         );
-
-
+        $this->assertEquals(1, $indexableEntity->getIdentifier());
     }
 
 }

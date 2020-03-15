@@ -3,7 +3,10 @@
 namespace Tests;
 
 
+use App\User;
+use ReflectionException;
 use Shader2k\SearchIndexer\DataPreparers\ElasticsearchDataPreparer;
+use Shader2k\SearchIndexer\Indexable\IndexableCollection;
 use Shader2k\SearchIndexer\Traits\HelpersTrait;
 
 class ElasticsearchDataPreparerTest extends TestCase
@@ -12,13 +15,13 @@ class ElasticsearchDataPreparerTest extends TestCase
 
     /**
      * приведение данных в формат Elasticsearch для Bulk
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function testPrepareDataToBulk()
     {
         $modelParams = [
             'indexType' => 'App/User',
-            'indexAliasWrite' => 'App/User_write',
+            'indexAliasWrite' => 'user_write',
         ];
         $data = [
             [
@@ -35,35 +38,40 @@ class ElasticsearchDataPreparerTest extends TestCase
             ]
         ];
         $preparedData = [
-            "body" => [
+            'body' => [
                 [
-                    "index" => [
-                        "_index" => "App/User_write",
-                        "_type" => "App/User",
-                        "_id" => 5
+                    'index' => [
+                        '_index' => 'user_write',
+                        '_type' => 'App/User',
+                        '_id' => 5
                     ]
                 ],
                 [
-                    "name" => "John",
-                    "email" => "test@example.com"
+                    'name' => 'John',
+                    'email' => 'test@example.com'
                 ],
                 [
-                    "index" => [
-                        "_index" => "App/User_write",
-                        "_type" => "App/User",
-                        "_id" => 1
+                    'index' => [
+                        '_index' => 'user_write',
+                        '_type' => 'App/User',
+                        '_id' => 1
                     ]
                 ],
                 [
-                    "name" => "Alex",
-                    "email" => "example@example.com"
+                    'name' => 'Alex',
+                    'email' => 'example@example.com'
                 ]
             ]
 
         ];
 
+        $collection = new IndexableCollection();
+        $user = factory(User::class)->make($data[0]);
+        $collection->push($user);
+        $user = factory(User::class)->make($data[1]);
+        $collection->push($user);
         $dataPreparer = new ElasticsearchDataPreparer();
-        $data = $dataPreparer->toBulk($data, $modelParams);
+        $data = $dataPreparer->toBulk($collection, $modelParams);
 
         $this->assertIsArray($data);
         $this->assertEquals($data, $preparedData);

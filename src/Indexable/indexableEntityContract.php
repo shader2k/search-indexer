@@ -8,13 +8,19 @@ interface indexableEntityContract
 {
     /**
      * indexableEntityContract constructor.
-     * @param IndaxableContract $item
+     * @param IndexableContract $item
      */
-    public function __construct(IndaxableContract $item);
+    public function __construct(IndexableContract $item);
 
     /**
      * Получение данных для индексации сущности
      * @return array
      */
-    public function getIndexData(): array;
+    public function getData(): array;
+
+    /**
+     * Получение идентификатора сущности
+     * @return string
+     */
+    public function getIdentifier(): string;
 }

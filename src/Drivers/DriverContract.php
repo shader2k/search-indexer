@@ -3,26 +3,23 @@
 namespace Shader2k\SearchIndexer\Drivers;
 
 use Shader2k\SearchIndexer\Exceptions\DriverException;
+use Shader2k\SearchIndexer\Indexable\IndexableCollectionContract;
 
 interface DriverContract
 {
     /**
      * Индексирование данных
-     * @param array $rawData
-     * @param object $model
+     * @param IndexableCollectionContract $collection
      * @return bool
-     * @throws \ReflectionException
      */
-    public function indexingData(array $rawData): bool;
+    public function indexingData(IndexableCollectionContract $collection): bool;
 
     /**
      * Подготовка индекса
-     * @param object $model
+     * @param string $modelClass
      * @return bool
-     * @throws DriverException
-     * @throws \ReflectionException
      */
-    public function prepareIndex(object $model): bool;
+    public function prepareIndex(string $modelClass): bool;
 
     /**
      * Завершающий шаг индексирования.
@@ -34,10 +31,9 @@ interface DriverContract
 
     /**
      * Установить модель
-     * @param object $model
-     * @throws \ReflectionException
+     * @param string $model
      */
-    public function setModel(object $model): void;
+    public function setModel(string $model): void;
 
     /**
      * Получить модель

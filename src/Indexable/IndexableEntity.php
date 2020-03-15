@@ -7,36 +7,37 @@ namespace Shader2k\SearchIndexer\Indexable;
 class IndexableEntity implements indexableEntityContract
 {
     /**
-     * @var $indexData array
+     * @var $data array
      */
-    private $indexData;
+    private $data;
+
+    private $identifier;
 
     /**
      * @inheritDoc
      */
-    public function __construct(IndaxableContract $item)
+    public function __construct(IndexableContract $item)
     {
         $this->setIndexData($item);
     }
 
     /**
      * Инициализация данных
-     * @param $item
+     * @param IndexableContract $item
      */
-    private function setIndexData($item): void
+    private function setIndexData(IndexableContract $item): void
     {
-        $this->indexData = [
-            'data' => $this->filterIndexFields($item),
-            'identifier' => $item->getIdentifier()
-        ];
+        $this->data = $this->filterIndexFields($item);
+        $this->identifier = $item->getIdentifierValue();
+
     }
 
     /**
      * Фильтрация данных
-     * @param $item
+     * @param IndexableContract $item
      * @return array
      */
-    private function filterIndexFields($item): array
+    private function filterIndexFields(IndexableContract $item): array
     {
         $tmp = [];
         foreach ($item->getIndexableFields() as $filter) {
@@ -48,8 +49,16 @@ class IndexableEntity implements indexableEntityContract
     /**
      * @inheritDoc
      */
-    public function getIndexData(): array
+    public function getData(): array
     {
-        return $this->indexData;
+        return $this->data;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getIdentifier(): string
+    {
+        return $this->identifier;
     }
 }

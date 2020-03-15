@@ -4,7 +4,11 @@
 namespace Shader2k\SearchIndexer\Indexable;
 
 
-class IndexableCollection implements IndexableCollectionContract
+use ArrayIterator;
+use IteratorAggregate;
+use Traversable;
+
+class IndexableCollection implements IndexableCollectionContract, IteratorAggregate
 {
 
 
@@ -15,20 +19,15 @@ class IndexableCollection implements IndexableCollectionContract
     /**
      * @var string|null
      */
-    protected $driver = null;
-    /**
-     * @var string|null
-     */
     protected $indexName = null;
 
     /**
      * @inheritDoc
      */
-    public function __construct(IndaxableContract ...$items)
+    public function __construct(IndexableContract ...$items)
     {
         if (!empty($items)) {
             $this->items = $this->collect($items);
-            $this->driver = $items[0]->getSearchDriver();
             $this->indexName = $items[0]->getIndexName();
         }
 
@@ -62,12 +61,9 @@ class IndexableCollection implements IndexableCollectionContract
     /**
      * @inheritDoc
      */
-    public function push(IndaxableContract $item): void
+    public function push(IndexableContract $item): void
     {
         $this->items[] = new IndexableEntity($item);
-        if ($this->driver === null) {
-            $this->driver = $item->getSearchDriver();
-        }
         if ($this->indexName === null) {
             $this->indexName = $item->getIndexName();
         }
@@ -81,13 +77,6 @@ class IndexableCollection implements IndexableCollectionContract
         return $this->items;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getSearchDriver(): ?string
-    {
-        return $this->driver;
-    }
 
     /**
      * @inheritDoc
@@ -95,5 +84,13 @@ class IndexableCollection implements IndexableCollectionContract
     public function getIndexName(): ?string
     {
         return $this->indexName;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getIterator(): Traversable
+    {
+        return new ArrayIterator($this->items);
     }
 }

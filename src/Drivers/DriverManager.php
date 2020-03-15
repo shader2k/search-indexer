@@ -6,26 +6,17 @@ namespace Shader2k\SearchIndexer\Drivers;
 
 use Shader2k\SearchIndexer\Drivers\Elasticsearch\ElasticsearchDriverFactory;
 use Shader2k\SearchIndexer\Exceptions\DriverException;
+use Shader2k\SearchIndexer\Helpers\Helper;
 
 class DriverManager
 {
     private $drivers;
 
-    /**
-     * Setter
-     * @param string $driverName
-     * @param DriverContract $driver must be instance
-     */
-    public function setDriver(string $driverName, DriverContract $driver): void
-    {
-        $this->drivers[$driverName] = $driver->buildDriver();
-    }
 
     /**
      * Возвращает или создает дайвер
      * @param $driverName
      * @return DriverContract
-     * @throws DriverException
      */
     public function getDriver(string $driverName = null): DriverContract
     {
@@ -49,40 +40,17 @@ class DriverManager
      */
     private function buildDriver(DriverFactoryContract $driverFactory): DriverContract
     {
+        /** @var DriverFactoryContract $driverFactory */
         return (new $driverFactory())->buildDriver();
 
     }
 
     private function createDriverFactory(string $driverClass): DriverFactoryContract
     {
-        $this->classExists($driverClass);
-        $this->classImplement($driverClass);
+        Helper::classExists($driverClass, DriverException::class);
+        Helper::classImplement($driverClass, DriverFactoryContract::class, DriverException::class);
         return new $driverClass();
 
-    }
-
-    /**
-     * Проверка на существование класса
-     * @param $driverClass
-     * @throws DriverException
-     */
-    private function classExists($driverClass): void
-    {
-        if (!class_exists($driverClass)) {
-            throw new DriverException("{$driverClass} doesn't exist");
-        }
-    }
-
-    /**
-     * Проверка на реализацию интерфейса драйвера
-     * @param $class
-     * @throws DriverException
-     */
-    private function classImplement($class): void
-    {
-        if (false === is_subclass_of($class, DriverFactoryContract::class)) {
-            throw new DriverException("{$class} does not implement " . DriverFactoryContract::class);
-        }
     }
 
 }

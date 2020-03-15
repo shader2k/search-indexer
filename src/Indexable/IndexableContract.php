@@ -4,7 +4,7 @@
 namespace Shader2k\SearchIndexer\Indexable;
 
 
-interface IndaxableContract
+interface IndexableContract
 {
     /**
      * Получить имя индекса
@@ -13,27 +13,33 @@ interface IndaxableContract
     public function getIndexName(): string;
 
     /**
-     * Получение идетификатора
+     * Получение значения идетификатора
      * @return string
      */
-    public function getIdentifier(): string;
+    public function getIdentifierValue(): string;
+
+    /**
+     * Получение названия поля идетификатора
+     * @return string
+     */
+    public static function getIdentifierField(): string;
 
     /**
      * Получение индексируемых полей
      * @return array
      */
-    public function getIndexableFields(): array;
+    public static function getIndexableFields(): array;
 
     /**
      * Получить поисковый драйвер
      * @return string
      */
-    public function getSearchDriver(): ?string;
+    public static function getSearchDriverName(): ?string;
 
     /**
      * Получить провайдер
      * @return string
      */
-    public function getProvider(): ?string;
+    public static function getProviderName(): ?string;
 
 }

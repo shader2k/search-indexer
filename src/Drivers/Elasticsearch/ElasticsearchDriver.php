@@ -4,10 +4,15 @@
 namespace Shader2k\SearchIndexer\Drivers\Elasticsearch;
 
 
+use Elasticsearch\Client;
+use Exception;
+use ReflectionException;
 use Shader2k\SearchIndexer\DataPreparers\ElasticsearchDataPreparer;
 use Shader2k\SearchIndexer\Drivers\DriverContract;
 use Shader2k\SearchIndexer\Exceptions\DriverException;
-use Elasticsearch\Client;
+use Shader2k\SearchIndexer\Helpers\Helper;
+use Shader2k\SearchIndexer\Indexable\IndexableCollectionContract;
+use Shader2k\SearchIndexer\Indexable\IndexableContract;
 
 class ElasticsearchDriver implements DriverContract
 {
@@ -32,33 +37,27 @@ class ElasticsearchDriver implements DriverContract
 
     /**
      * Индексирование данных
-     * @param array $rawData
-     * @param object $model
+     * @param IndexableCollectionContract $collection
      * @return bool
-     * @throws \ReflectionException
      */
-    public function indexingData(array $rawData): bool
+    public function indexingData(IndexableCollectionContract $collection): bool
     {
-        if (empty($rawData)) {//индексация окончена
+        if ($collection->isEmpty()) {//индексация окончена
             return true;
         }
-        if (count($rawData) !== count($rawData, COUNT_RECURSIVE)) {
-            $data = $this->dataPreparer->toBulk($rawData, $this->getModelParamsToArray());
-            return $this->bulk($data);
-        } else {
-            //todo:Одномерный
-            return false;
-        }
+        $data = $this->dataPreparer->toBulk($collection, $this->getModelParamsToArray());
+        return $this->bulk($data);
+
     }
 
     /**
      * Подготовка индекса
-     * @param object $model
+     * @param string $model
      * @return bool
      * @throws DriverException
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
-    public function prepareIndex(object $model): bool
+    public function prepareIndex(string $model): bool
     {
         $this->setModel($model);
         //старый индекс
@@ -137,7 +136,7 @@ class ElasticsearchDriver implements DriverContract
             if ($response['acknowledged'] === true) {
                 return true;
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new DriverException('Ошибка атомарного обновления алиаса у индекса ' . $this->indexType . ' (elasticsearch)');
         }
 
@@ -163,7 +162,7 @@ class ElasticsearchDriver implements DriverContract
             if ($response['acknowledged'] === true) {
                 return true;
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             echo $e->getMessage() . " " . $e->getTrace();
         }
 
@@ -183,11 +182,7 @@ class ElasticsearchDriver implements DriverContract
             'index' => $indexName
         ];
         $response = $this->client->indices()->deleteAlias($params);
-        if ($response['acknowledged'] === true) {
-            return true;
-        } else {
-            return false;
-        }
+        return $response['acknowledged'] === true;
     }
 
     /**
@@ -203,21 +198,17 @@ class ElasticsearchDriver implements DriverContract
             'index' => $indexName
         ];
         $response = $this->client->indices()->putAlias($params);
-        if ($response['acknowledged'] === true) {
-            return true;
-        } else {
-            return false;
-        }
+        return $response['acknowledged'] === true;
     }
 
     /**
      * Создание индекса
-     * @param bool $postfix
+     * @param string $postfix
      * @return string|null
      */
-    private function createIndex(bool $postfix = false): ?string
+    private function createIndex(string $postfix = ''): ?string
     {
-        if ($postfix === false) {
+        if ($postfix === '') {
             $postfix = '_' . microtime(true);
         }
         $params = [
@@ -230,8 +221,8 @@ class ElasticsearchDriver implements DriverContract
                 if ($response['acknowledged'] === true) {
                     return $response['index'];
                 }
-            } catch (\Exception $e) {
-                echo $e->getMessage() . " " . $e->getTrace();
+            } catch (Exception $e) {
+                echo $e->getMessage() . ' ' . $e->getTrace();
             }
         }
 
@@ -251,11 +242,7 @@ class ElasticsearchDriver implements DriverContract
             $params['index'] = $indexName;
         }
         $aliasExist = $this->client->indices()->existsAlias($params);
-        if ($aliasExist === true) {
-            return true;
-        } else {
-            return false;
-        }
+        return $aliasExist === true;
     }
 
 
@@ -294,6 +281,7 @@ class ElasticsearchDriver implements DriverContract
      * Поиск имени индекса по алиасу
      * @param string $aliasName
      * @return string
+     * @throws DriverException
      */
     private function findIndexNameByAlias(string $aliasName): string
     {
@@ -323,7 +311,7 @@ class ElasticsearchDriver implements DriverContract
             if ($response['errors'] === true) {
                 return false;
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             echo $e->getCode() . ' ' . $e->getMessage();
             return false;
         }
@@ -333,14 +321,17 @@ class ElasticsearchDriver implements DriverContract
 
     /**
      * Установить модель
-     * @param object $model
-     * @throws \ReflectionException
+     * @param string $modelClass
+     * @throws ReflectionException
      */
-    public function setModel(object $model): void
+    public function setModel(string $modelClass): void
     {
-        if (empty($model) === false) {
-            $this->model = $model;
+        Helper::classExists($modelClass, DriverException::class);
+        Helper::classImplement($modelClass, IndexableContract::class, DriverException::class);
+        if (empty($modelClass) === false) {
+            $this->model = $modelClass;
             $this->setModelParams();
+
         }
     }
 
@@ -355,13 +346,12 @@ class ElasticsearchDriver implements DriverContract
 
     /**
      * Установить параметры модели
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     private function setModelParams(): void
     {
-        $shortClassName = strtolower((new \ReflectionClass($this->model))->getShortName());
-        $className = get_class($this->model);
-        $this->indexType = $className;
+        $shortClassName = strtolower(substr(strrchr($this->model, "\\"), 1));
+        $this->indexType = $this->model;
         $this->indexName = $shortClassName;
         $this->indexAliasWrite = $shortClassName . self::POSTFIX_WRITE;
         $this->indexAliasRead = $shortClassName . self::POSTFIX_READ;

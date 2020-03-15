@@ -3,38 +3,47 @@
 namespace Shader2k\SearchIndexer;
 
 use Dotenv\Dotenv;
+use ReflectionException;
 use Shader2k\SearchIndexer\Drivers\DriverManager;
 use Shader2k\SearchIndexer\Exceptions\IndexingException;
-use Shader2k\SearchIndexer\Providers\EloquentProvider;
+use Shader2k\SearchIndexer\Exceptions\ProviderException;
+use Shader2k\SearchIndexer\Helpers\Helper;
+use Shader2k\SearchIndexer\Indexable\IndexableCollectionContract;
+use Shader2k\SearchIndexer\Indexable\IndexableContract;
+use Shader2k\SearchIndexer\Providers\ProviderManager;
 
 class SearchIndexerService
 {
     public $env;
     private $chunk;
     private $data;
-    private $provider;
+    private $providerManager;
     private $driverManager;
     private $model;
     private $driver = null;
+    private $provider = null;
 
-    public function __construct(EloquentProvider $provider, DriverManager $driverManager)
+    public function __construct(ProviderManager $providerManager, DriverManager $driverManager)
     {
         $this->env = Dotenv::create(__DIR__);
         $this->env->load();
-        $this->provider = $provider;
+        $this->providerManager = $providerManager;
         $this->driverManager = $driverManager;
         $this->chunk = 1; //todo env param
     }
 
     /**
      * Индексирование модели
-     * @param object $model
+     * @param string $model
      * @return bool
      * @throws Exceptions\DriverException
-     * @throws \ReflectionException
+     * @throws ProviderException
+     * @throws ReflectionException
      */
-    public function indexingModel(object $model): bool
+    public function indexingModel(string $model): bool
     {
+        $this->setSettings($model);
+
         $this->model = $model;
         try {
             if ($this->prepareIndex() === false) {
@@ -59,7 +68,7 @@ class SearchIndexerService
      * Подготовка индекса
      * @return bool
      * @throws Exceptions\DriverException
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     protected function prepareIndex(): bool
     {
@@ -68,23 +77,25 @@ class SearchIndexerService
 
     /**
      * Получение порции данных из модели
-     * @param object $model
+     * @param string $model
      * @return bool
+     * @throws ProviderException
      */
-    protected function getChunkOfDataFromModel(object $model): bool
+    protected function getChunkOfDataFromModel(string $model): bool
     {
-        $chunk = $this->provider->getChunk($model, $this->chunk);
-        if (empty($chunk)) {
+        /** @var IndexableCollectionContract $collection */
+        $collection = $this->providerManager->getProvider($this->provider)->getChunk($model, $this->chunk);
+        if ($collection->isEmpty()) {
             return false;
         }
-        $this->setData($chunk);
+        $this->setData($collection);
         return true;
     }
 
     /**
      * Индексирование
      * @return bool
-     * @throws \ReflectionException
+     * @throws ReflectionException
      * @throws Exceptions\DriverException
      */
     protected function indexing(): bool
@@ -92,12 +103,12 @@ class SearchIndexerService
         return $this->driverManager->getDriver($this->driver)->indexingData($this->getData());
     }
 
-    public function getData(): array
+    public function getData(): IndexableCollectionContract
     {
         return $this->data;
     }
 
-    public function setData(array $data): void
+    public function setData(IndexableCollectionContract $data): void
     {
         $this->data = $data;
     }
@@ -115,11 +126,17 @@ class SearchIndexerService
     public function resetSettings(): void
     {
         $this->driver = null;
+        $this->provider = null;
     }
 
-    public function setDriver($driverName): void
+    private function setSettings(string $modelClass): void
     {
-        $this->driver = $driverName;
+        Helper::classExists($modelClass, IndexingException::class);
+        Helper::classImplement($modelClass, IndexableContract::class, IndexingException::class);
+
+        /** @var IndexableContract $modelClass */
+        $this->driver = $modelClass::getSearchDriverName();
+        $this->provider = $modelClass::getProviderName();
     }
 
 
