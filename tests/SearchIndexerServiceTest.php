@@ -4,9 +4,12 @@ namespace Shader2k\SearchIndexer\Tests;
 
 use App\User;
 use Mockery as m;
+use ReflectionException;
 use Shader2k\SearchIndexer\Drivers\DriverContract;
 use Shader2k\SearchIndexer\Drivers\DriverManager;
 use Shader2k\SearchIndexer\Drivers\Elasticsearch\ElasticsearchDriver;
+use Shader2k\SearchIndexer\Exceptions\DriverException;
+use Shader2k\SearchIndexer\Exceptions\ProviderException;
 use Shader2k\SearchIndexer\Indexable\IndexableCollection;
 use Shader2k\SearchIndexer\Indexable\IndexableCollectionContract;
 use Shader2k\SearchIndexer\Indexable\IndexableContract;
@@ -20,6 +23,12 @@ use Tests\TestCase;
 class SearchIndexerServiceTest extends TestCase
 {
 
+    /**
+     * Тестирование индексирования модели
+     * @throws ReflectionException
+     * @throws DriverException
+     * @throws ProviderException
+     */
     public function testIndexingModel(): void
     {
         $mockIC = m::mock(IndexableCollection::class, IndexableCollectionContract::class)->makePartial();
@@ -27,9 +36,9 @@ class SearchIndexerServiceTest extends TestCase
             ->andReturn(false, true);
 
         $mockUser = m::mock('alias:' . User::class, IndexableContract::class);
-        $mockUser->shouldReceive('getProviderName')->once()
+        $mockUser->shouldReceive('getProviderName')->times(2)
             ->andReturn('ProviderName');
-        $mockUser->shouldReceive('getSearchDriverName')->once()
+        $mockUser->shouldReceive('getSearchDriverName')->times(2)
             ->andReturn('DriverName');
 
         $mockProviderManager = m::mock(ProviderManager::class);
@@ -37,7 +46,7 @@ class SearchIndexerServiceTest extends TestCase
         $mockDriver = m::mock('alias:' . ElasticsearchDriver::class, DriverContract::class);
         $mockProvider = m::mock('alias:' . EloquentProvider::class, ProviderContract::class);
         $mockDriverManager->shouldReceive('getDriver')
-            ->times(3)
+            ->times(4)
             ->andReturn($mockDriver);
         $mockDriver->shouldReceive('prepareIndex')
             ->once()
@@ -64,6 +73,15 @@ class SearchIndexerServiceTest extends TestCase
         $index = $searchIndexer->indexingModel(User::class);
 
         $this->assertTrue($index);
+
+        //тест ошибки подготовки индекса
+        $mockDriver->shouldReceive('prepareIndex')
+            ->once()
+            ->andReturn(false);
+
+        $searchIndexer = new SearchIndexerService($mockProviderManager, $mockDriverManager);
+        $index = $searchIndexer->indexingModel(User::class);
+        $this->assertFalse($index);
 
 
     }
