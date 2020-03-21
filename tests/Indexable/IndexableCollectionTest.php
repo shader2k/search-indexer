@@ -2,10 +2,10 @@
 
 namespace Tests\Drivers;
 
-use App\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Shader2k\SearchIndexer\Indexable\IndexableCollection;
 use Shader2k\SearchIndexer\Indexable\IndexableEntity;
+use Shader2k\SearchIndexer\Tests\Data\MockObjects;
 use Shader2k\SearchIndexer\Traits\HelpersTrait;
 use Tests\TestCase;
 
@@ -19,11 +19,11 @@ class IndexableCollectionTest extends TestCase
      */
     public function testCollect(): void
     {
-        factory(User::class)->create(['name' => 'John', 'email' => 'john@example.com']);
-        factory(User::class)->create();
 
-        $items = User::query()->paginate(2, ['*'], 'page', 1);
-        $collection = new IndexableCollection(...$items->all());
+        $mockUser = MockObjects::getUserObject(['name' => 'John', 'email' => 'john@example.com']);
+        $mockUser2 = MockObjects::getUserObject(['name' => 'Mike', 'email' => 'mike@example.com']);
+
+        $collection = new IndexableCollection($mockUser, $mockUser2);
         $collectionItems = $collection->all();
 
         $this->assertNotEmpty($collectionItems);
@@ -36,15 +36,8 @@ class IndexableCollectionTest extends TestCase
      */
     public function testPush(): void
     {
-        $mockUser = $this->getMockBuilder(User::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $mockUser->method('getIndexName')
-            ->willReturn('fakeIndexName');
 
-        $mockUser->id = 1;
-        $mockUser->name = 'John';
-        $mockUser->email = 'john@example.com';
+        $mockUser = MockObjects::getUserObject(['name' => 'John', 'email' => 'john@example.com']);
 
         $collection = new IndexableCollection();
         $collection->push($mockUser);
@@ -60,16 +53,7 @@ class IndexableCollectionTest extends TestCase
      */
     public function testGetIndexName(): void
     {
-        $mockUser = $this->getMockBuilder(User::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getIndexName'])
-            ->getMock();
-        $mockUser->method('getIndexName')
-            ->willReturn('fakeIndexName');
-
-        $mockUser->id = 1;
-        $mockUser->name = 'John';
-        $mockUser->email = 'john@example.com';
+        $mockUser = MockObjects::getUserObject(['name' => 'John', 'email' => 'john@example.com']);
 
         $collection = new IndexableCollection();
         $collection->push($mockUser);
@@ -83,21 +67,11 @@ class IndexableCollectionTest extends TestCase
      */
     public function testGetSearchDriver(): void
     {
-
-        $mockUser = $this->getMockBuilder(User::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getSearchDriver'])
-            ->getMock();
-        $mockUser->method('getSearchDriver')
-            ->willReturn('fakeDriver');
-
-        $mockUser->id = 1;
-        $mockUser->name = 'John';
-        $mockUser->email = 'john@example.com';
+        $mockUser = MockObjects::getUserObject(['name' => 'John', 'email' => 'john@example.com']);
 
         $collection = new IndexableCollection();
         $collection->push($mockUser);
-        $driverName = $collection->getSearchDriver();
+        $driverName = $collection->getSearchDriverName();
 
         $this->assertStringContainsString('fakeDriver', $driverName);
     }

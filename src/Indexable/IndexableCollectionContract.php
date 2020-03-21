@@ -39,5 +39,11 @@ interface IndexableCollectionContract
      */
     public function getIndexName(): ?string;
 
+    /**
+     * Получение имени драйвера
+     * @return string
+     */
+    public function getSearchDriverName(): ?string;
+
 
 }

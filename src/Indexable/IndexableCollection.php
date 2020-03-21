@@ -16,10 +16,16 @@ class IndexableCollection implements IndexableCollectionContract, IteratorAggreg
      * @var array
      */
     protected $items;
+
     /**
      * @var string|null
      */
     protected $indexName = null;
+
+    /**
+     * @var string|null
+     */
+    protected $searchDriver = null;
 
     /**
      * @inheritDoc
@@ -29,6 +35,7 @@ class IndexableCollection implements IndexableCollectionContract, IteratorAggreg
         if (!empty($items)) {
             $this->items = $this->collect($items);
             $this->indexName = $items[0]->getIndexName();
+            $this->searchDriver = $items[0]->getSearchDriverName();
         }
 
     }
@@ -48,7 +55,6 @@ class IndexableCollection implements IndexableCollectionContract, IteratorAggreg
         return $filtered;
     }
 
-
     /**
      * @inheritDoc
      */
@@ -56,7 +62,6 @@ class IndexableCollection implements IndexableCollectionContract, IteratorAggreg
     {
         return empty($this->items);
     }
-
 
     /**
      * @inheritDoc
@@ -66,6 +71,7 @@ class IndexableCollection implements IndexableCollectionContract, IteratorAggreg
         $this->items[] = new IndexableEntity($item);
         if ($this->indexName === null) {
             $this->indexName = $item->getIndexName();
+            $this->searchDriver = $item->getSearchDriverName();
         }
     }
 
@@ -76,7 +82,6 @@ class IndexableCollection implements IndexableCollectionContract, IteratorAggreg
     {
         return $this->items;
     }
-
 
     /**
      * @inheritDoc
@@ -92,5 +97,13 @@ class IndexableCollection implements IndexableCollectionContract, IteratorAggreg
     public function getIterator(): Traversable
     {
         return new ArrayIterator($this->items);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getSearchDriverName(): ?string
+    {
+        return $this->searchDriver;
     }
 }
