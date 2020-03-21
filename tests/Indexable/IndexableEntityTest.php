@@ -2,9 +2,10 @@
 
 namespace Tests\Drivers;
 
-use App\User;
+use Exception;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Shader2k\SearchIndexer\Indexable\IndexableEntity;
+use Shader2k\SearchIndexer\Tests\Data\MockObjects;
 use Shader2k\SearchIndexer\Traits\HelpersTrait;
 use Tests\TestCase;
 
@@ -15,6 +16,7 @@ class IndexableEntityTest extends TestCase
 
     /**
      * тестирование создания индексируемой сущности
+     * @throws Exception
      */
     public function testSetIndexData(): void
     {
@@ -22,8 +24,8 @@ class IndexableEntityTest extends TestCase
             'name' => 'John',
             'email' => 'john@example.com'
         ];
-        $user = factory(User::class)->make(['id' => '1', 'name' => 'John', 'email' => 'john@example.com']);
-        $indexableEntity = new IndexableEntity($user);
+        $mockUser = MockObjects::getUserObject(['id' => 1, 'name' => 'John', 'email' => 'john@example.com']);
+        $indexableEntity = new IndexableEntity($mockUser);
 
         $this->assertJsonStringEqualsJsonString(
             json_encode($expected),

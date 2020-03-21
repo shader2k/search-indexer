@@ -1,13 +1,14 @@
 <?php
 
-namespace Tests;
+namespace Tests\DataPreparers;
 
 
-use App\User;
-use ReflectionException;
+use Exception;
 use Shader2k\SearchIndexer\DataPreparers\ElasticsearchDataPreparer;
 use Shader2k\SearchIndexer\Indexable\IndexableCollection;
+use Shader2k\SearchIndexer\Tests\Data\MockObjects;
 use Shader2k\SearchIndexer\Traits\HelpersTrait;
+use Tests\TestCase;
 
 class ElasticsearchDataPreparerTest extends TestCase
 {
@@ -15,9 +16,9 @@ class ElasticsearchDataPreparerTest extends TestCase
 
     /**
      * приведение данных в формат Elasticsearch для Bulk
-     * @throws ReflectionException
+     * @throws Exception
      */
-    public function testPrepareDataToBulk()
+    public function testPrepareDataToBulk(): void
     {
         $modelParams = [
             'indexType' => 'App/User',
@@ -66,10 +67,10 @@ class ElasticsearchDataPreparerTest extends TestCase
         ];
 
         $collection = new IndexableCollection();
-        $user = factory(User::class)->make($data[0]);
-        $collection->push($user);
-        $user = factory(User::class)->make($data[1]);
-        $collection->push($user);
+        $mockUser = MockObjects::getUserObject($data[0]);
+        $collection->push($mockUser);
+        $mockUser = MockObjects::getUserObject($data[1]);
+        $collection->push($mockUser);
         $dataPreparer = new ElasticsearchDataPreparer();
         $data = $dataPreparer->toBulk($collection, $modelParams);
 
