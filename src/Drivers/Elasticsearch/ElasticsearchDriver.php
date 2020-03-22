@@ -43,7 +43,7 @@ class ElasticsearchDriver implements DriverContract
     public function indexingData(IndexableCollectionContract $collection): bool
     {
         if ($collection->isEmpty()) {//индексация окончена
-            return true;
+            return false;
         }
         $data = $this->dataPreparer->toBulk($collection, $this->getModelParamsToArray());
         return $this->bulk($data);
@@ -309,7 +309,7 @@ class ElasticsearchDriver implements DriverContract
 
             $response = $this->client->bulk($data);
             if ($response['errors'] === true) {
-                return false;
+                throw new DriverException('Ошибка вставки данных в индекс.');
             }
         } catch (Exception $e) {
             echo $e->getCode() . ' ' . $e->getMessage();

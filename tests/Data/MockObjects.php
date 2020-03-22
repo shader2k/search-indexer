@@ -4,13 +4,40 @@ namespace Shader2k\SearchIndexer\Tests\Data;
 
 use App\User;
 use Exception;
-use Mockery as m;
 use Shader2k\SearchIndexer\Indexable\IndexableCollection;
 use Shader2k\SearchIndexer\Indexable\IndexableCollectionContract;
 use Shader2k\SearchIndexer\Indexable\IndexableContract;
 
 class MockObjects
 {
+    /**
+     * Генерация коллекции
+     * @param int $count
+     * @param array $fields
+     * @return IndexableCollectionContract
+     * @throws Exception
+     */
+    public static function getIndexableCollection(int $count = 1, array $fields = []): IndexableCollectionContract
+    {
+        $collection = new IndexableCollection();
+        if ($count === 0) {
+            return $collection;
+        }
+        $userRawData = self::getRawUserData($count);
+        if (!empty($fields)) {
+            foreach ($fields as $field) {
+                $collection->push(factory(User::class)->make($field));
+            }
+            return $collection;
+        }
+
+        for ($i = 0; $i < $count; $i++) {
+            $collection->push(self::getUserObject($userRawData[$i]));
+        }
+        return $collection;
+    }
+
+
     /**
      * Cоздание объекта пользователь
      * @param array $fields
@@ -19,51 +46,56 @@ class MockObjects
      */
     public static function getUserObject(array $fields = []): IndexableContract
     {
-        $mockUser = m::mock('alias:' . User::class, IndexableContract::class);
-        $mockUser->shouldReceive('getIndexName')
-            ->andReturn('fakeIndexName');
-        $mockUser->shouldReceive('getSearchDriverName')
-            ->andReturn('fakeDriver');
-        $mockUser->shouldReceive('getIndexableFields')
-            ->andReturn(['name', 'email']);
-        if (!empty($fields['id'])) {
-            $mockUser->shouldReceive('getIdentifierValue')
-                ->andReturn($fields['id']);
-        } else {
-            $mockUser->shouldReceive('getIdentifierValue')
-                ->andReturn(random_int(1, 100));
+        $user = new UserModel();
+        if (empty($fields)) {
+            $user->id = random_int(1, 100);
+            $user->name = 'fakeUserName';
+            $user->email = 'fake@email.com';
+            return $user;
         }
-        $mockUser->shouldReceive('getIdentifierField')
-            ->andReturn('id');
-        if (!empty($fields)) {
-            foreach ($fields as $prop => $val) {
-                $mockUser->$prop = $val;
-            }
+
+        foreach ($fields as $prop => $val) {
+            $user->$prop = $val;
         }
-        return $mockUser;
+
+        return $user;
     }
 
-    /**
-     * Генерация коллекции
-     * @param int $count
-     * @param array $fields
-     * @return IndexableCollectionContract
-     */
-    public static function getIndexableCollection(int $count = 1, array $fields = []): IndexableCollectionContract
+    public static function getRawUserData(int $count = 1): array
     {
-        $collection = new IndexableCollection();
+        $rawData = [
+            [
+                'id' => 3,
+                'name' => 'John',
+                'email' => 'john@example.com'
 
-        if (!empty($fields)) {
-            foreach ($fields as $field) {
-                $collection->push(factory(User::class)->make($field));
-            }
-            return $collection;
-        }
-        for ($i = 0; $i < $count; $i++) {
-            $collection->push(factory(User::class)->make(['id' => 1]));
-        }
-        return $collection;
+            ],
+            [
+                'id' => 1,
+                'name' => 'Alex',
+                'email' => 'alex@example.com'
+
+            ],
+            [
+                'id' => 2,
+                'name' => 'Mike',
+                'email' => 'mike@example.com'
+
+            ],
+            [
+                'id' => 4,
+                'name' => 'Tomas',
+                'email' => 'tomas@example.com'
+
+            ],
+            [
+                'id' => 5,
+                'name' => 'Martin',
+                'email' => 'martin@example.com'
+
+            ]
+        ];
+        return array_slice($rawData, 0, $count);
     }
-
 
 }
