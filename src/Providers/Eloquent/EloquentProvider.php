@@ -5,6 +5,7 @@ namespace Shader2k\SearchIndexer\Providers\Eloquent;
 
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Shader2k\SearchIndexer\Indexable\IndexableCollection;
 use Shader2k\SearchIndexer\Indexable\IndexableCollectionContract;
@@ -33,7 +34,7 @@ class EloquentProvider implements ProviderContract
         return new IndexableCollection(...$result->all());
     }
 
-    private function getBuilder(string $modelClass)
+    private function getBuilder(string $modelClass): Builder
     {
         /**  @var Model $modelClass */
         return $modelClass::query();

@@ -4,7 +4,7 @@
 namespace Shader2k\SearchIndexer\Indexable;
 
 
-interface indexableEntityContract
+interface IndexableEntityContract
 {
     /**
      * indexableEntityContract constructor.

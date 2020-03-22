@@ -4,7 +4,7 @@
 namespace Shader2k\SearchIndexer\Indexable;
 
 
-class IndexableEntity implements indexableEntityContract
+class IndexableEntity implements IndexableEntityContract
 {
     /**
      * @var $data array

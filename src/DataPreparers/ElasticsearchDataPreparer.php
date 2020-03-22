@@ -5,7 +5,7 @@ namespace Shader2k\SearchIndexer\DataPreparers;
 
 
 use Shader2k\SearchIndexer\Indexable\IndexableCollectionContract;
-use Shader2k\SearchIndexer\Indexable\indexableEntityContract;
+use Shader2k\SearchIndexer\Indexable\IndexableEntityContract;
 
 class ElasticsearchDataPreparer implements DataPreparerContract
 {
@@ -21,7 +21,7 @@ class ElasticsearchDataPreparer implements DataPreparerContract
         }
 
         $preparedData = [];
-        /** @var indexableEntityContract $item */
+        /** @var IndexableEntityContract $item */
         foreach ($collection as $item) {
             $preparedData['body'][] = [
                 'index' => [

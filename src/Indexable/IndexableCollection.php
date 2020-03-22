@@ -15,7 +15,7 @@ class IndexableCollection implements IndexableCollectionContract, IteratorAggreg
     /**
      * @var array
      */
-    protected $items;
+    protected $items = [];
 
     /**
      * @var string|null
