@@ -7,6 +7,7 @@ use ReflectionException;
 use Shader2k\SearchIndexer\Drivers\DriverManager;
 use Shader2k\SearchIndexer\Exceptions\IndexingException;
 use Shader2k\SearchIndexer\Exceptions\ProviderException;
+use Shader2k\SearchIndexer\Helpers\Config;
 use Shader2k\SearchIndexer\Helpers\Helper;
 use Shader2k\SearchIndexer\Indexable\IndexableCollectionContract;
 use Shader2k\SearchIndexer\Indexable\IndexableContract;
@@ -15,7 +16,8 @@ use Shader2k\SearchIndexer\Providers\ProviderManager;
 class SearchIndexerService
 {
     public $env;
-    private $chunk;
+    public $config;
+    private $providerChunkSize;
     private $data;
     private $providerManager;
     private $driverManager;
@@ -25,11 +27,15 @@ class SearchIndexerService
 
     public function __construct(ProviderManager $providerManager, DriverManager $driverManager)
     {
+        //todo путь к env
         $this->env = Dotenv::create(__DIR__);
         $this->env->load();
+        $this->config = Config::getInstance();
+        //todo путь к файлу конфига
+        $this->config->load('/var/www/config/indexerconfig.php');
         $this->providerManager = $providerManager;
         $this->driverManager = $driverManager;
-        $this->chunk = 1; //todo env param
+        $this->providerChunkSize = (int)config('indexerconfig.dataProviderChunkSize');
     }
 
     /**
@@ -84,7 +90,7 @@ class SearchIndexerService
     protected function getChunkOfDataFromModel(string $model): bool
     {
         /** @var IndexableCollectionContract $collection */
-        $collection = $this->providerManager->getProvider($this->provider)->getChunk($model, $this->chunk);
+        $collection = $this->providerManager->getProvider($this->provider)->getChunk($model, $this->providerChunkSize);
         if ($collection->isEmpty()) {
             return false;
         }

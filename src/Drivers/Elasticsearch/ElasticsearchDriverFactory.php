@@ -20,7 +20,7 @@ class ElasticsearchDriverFactory implements DriverFactoryContract
     {
         $dataPreparer = new ElasticsearchDataPreparer();
         //todo проверка на существование env параметра
-        $client = ClientBuilder::create()->setHosts([env('ELASTICSEARCH_HOST')])->build();
+        $client = ClientBuilder::create()->setHosts([config('indexerconfig.elasticsearchHost')])->build();
         return new ElasticsearchDriver($dataPreparer, $client);
     }
 }

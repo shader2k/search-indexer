@@ -18,12 +18,12 @@ class EloquentProvider implements ProviderContract
     /**
      * @inheritDoc
      */
-    public function getChunk(string $modelClass, int $chunk): IndexableCollectionContract
+    public function getChunk(string $modelClass, int $chunkSize): IndexableCollectionContract
     {
         $queryBuilder = $this->getBuilder($modelClass);
         /** @var LengthAwarePaginator $result */
         $result = $queryBuilder->select(array_merge([$modelClass::getIdentifierField()], $modelClass::getIndexableFields()))
-            ->paginate($chunk, ['*'], 'page', $this->getNextPage());
+            ->paginate($chunkSize, ['*'], 'page', $this->getNextPage());
 
         if ($result->currentPage() > $result->lastPage()) {
             $this->setNextPage(1);

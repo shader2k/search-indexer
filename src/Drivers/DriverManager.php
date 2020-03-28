@@ -4,7 +4,6 @@
 namespace Shader2k\SearchIndexer\Drivers;
 
 
-use Shader2k\SearchIndexer\Drivers\Elasticsearch\ElasticsearchDriverFactory;
 use Shader2k\SearchIndexer\Exceptions\DriverException;
 use Shader2k\SearchIndexer\Helpers\Helper;
 
@@ -22,15 +21,16 @@ class DriverManager
     {
         $driverName = $driverName ?: $this->getDefaultDriverName();
         if ($this->drivers[$driverName] === null) {
-            //todo получение класса по имени из конфиг файла
-            $this->drivers[$driverName] = $this->buildDriver($this->createDriverFactory(ElasticsearchDriverFactory::class));
+            $this->drivers[$driverName] = $this->buildDriver(
+                $this->createDriverFactory(config('indexerconfig.searchDriverFactories.' . $driverName))
+            );
         }
         return $this->drivers[$driverName];
     }
 
     private function getDefaultDriverName(): string
-    {   //todo получение имени драйвера по умолчанию из конфиг файла
-        return 'elasticsearch';
+    {
+        return config('indexerconfig.searchDriverNameDefault');
     }
 
     /**

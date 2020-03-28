@@ -21,6 +21,7 @@
         "php": "^7.1",
         "elasticsearch/elasticsearch": "^7.0",
         "vlucas/phpdotenv": "^4.0",
+        "hassankhan/config": "^2.1",
         "ext-json": "*"
     },
     "require-dev": {
@@ -36,6 +37,9 @@
         }
     },
     "autoload-dev": {
+        "files": [
+            "src/Helpers/helpers.php"
+        ],
         "psr-4": {
             "Shader2k\\SearchIndexer\\Tests\\": "tests/"
         }
