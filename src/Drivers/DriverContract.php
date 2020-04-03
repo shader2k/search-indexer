@@ -28,16 +28,4 @@ interface DriverContract
      * @throws DriverException
      */
     public function deploymentIndex(): bool;
-
-    /**
-     * Установить модель
-     * @param string $model
-     */
-    public function setModel(string $model): void;
-
-    /**
-     * Получить модель
-     * @return object
-     */
-    public function getModel(): object;
 }
