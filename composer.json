@@ -20,7 +20,7 @@
     "require": {
         "php": "^7.1",
         "elasticsearch/elasticsearch": "^7.0",
-        "vlucas/phpdotenv": "^4.0",
+        "vlucas/phpdotenv": "^3.6",
         "hassankhan/config": "^2.1",
         "ext-json": "*"
     },
