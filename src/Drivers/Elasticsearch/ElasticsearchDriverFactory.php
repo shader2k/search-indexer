@@ -5,7 +5,6 @@ namespace Shader2k\SearchIndexer\Drivers\Elasticsearch;
 
 
 use Elasticsearch\ClientBuilder;
-use Shader2k\SearchIndexer\DataPreparers\ElasticsearchDataPreparer;
 use Shader2k\SearchIndexer\Drivers\DriverContract;
 use Shader2k\SearchIndexer\Drivers\DriverFactoryContract;
 

@@ -1,18 +1,15 @@
 <?php
 
-namespace Tests\DataPreparers;
-
+namespace Tests\Drivers;
 
 use Exception;
-use Shader2k\SearchIndexer\DataPreparers\ElasticsearchDataPreparer;
+use Shader2k\SearchIndexer\Drivers\Elasticsearch\ElasticsearchDataPreparer;
 use Shader2k\SearchIndexer\Indexable\IndexableCollection;
 use Shader2k\SearchIndexer\Tests\Data\MockObjects;
-use Shader2k\SearchIndexer\Traits\HelpersTrait;
 use Tests\TestCase;
 
 class ElasticsearchDataPreparerTest extends TestCase
 {
-    use HelpersTrait;
 
     /**
      * приведение данных в формат Elasticsearch для Bulk

@@ -2,7 +2,9 @@
 
 namespace Shader2k\SearchIndexer;
 
+use Composer\Autoload\ClassLoader;
 use Dotenv\Dotenv;
+use ReflectionClass;
 use ReflectionException;
 use Shader2k\SearchIndexer\Drivers\DriverManager;
 use Shader2k\SearchIndexer\Exceptions\IndexingException;
@@ -27,12 +29,12 @@ class SearchIndexerService
 
     public function __construct(ProviderManager $providerManager, DriverManager $driverManager)
     {
-        //todo путь к env
-        $this->env = Dotenv::create(__DIR__);
+        $autoloader = new ReflectionClass(ClassLoader::class);
+        $appRootPath = dirname($autoloader->getFileName(), 3);
+        $this->env = Dotenv::create($appRootPath);
         $this->env->load();
         $this->config = Config::getInstance();
-        //todo путь к файлу конфига
-        $this->config->load('/var/www/config/indexerconfig.php');
+        $this->config->load($appRootPath . '/config/indexerconfig.php');
         $this->providerManager = $providerManager;
         $this->driverManager = $driverManager;
         $this->providerChunkSize = (int)config('indexerconfig.dataProviderChunkSize');

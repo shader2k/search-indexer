@@ -6,12 +6,10 @@ use Exception;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Shader2k\SearchIndexer\Indexable\IndexableEntity;
 use Shader2k\SearchIndexer\Tests\Data\MockObjects;
-use Shader2k\SearchIndexer\Traits\HelpersTrait;
 use Tests\TestCase;
 
 class IndexableEntityTest extends TestCase
 {
-    use HelpersTrait;
     use DatabaseMigrations;
 
     /**

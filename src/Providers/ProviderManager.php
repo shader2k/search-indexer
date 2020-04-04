@@ -21,6 +21,10 @@ class ProviderManager
     {
         $providerName = $providerName ?: $this->getDefaultProviderName();
         if ($this->providers[$providerName] === null) {
+            $providerClass = config('indexerconfig.dataProviderFactories.' . $providerName);
+            if (!$providerClass) {
+                throw new ProviderException('Не указан драйвер поискового движка');
+            }
             $this->providers[$providerName] = $this->buildProvider(
                 $this->createProviderFactory(config('indexerconfig.dataProviderFactories.' . $providerName))
             );

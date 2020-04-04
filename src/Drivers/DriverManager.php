@@ -16,11 +16,16 @@ class DriverManager
      * Возвращает или создает дайвер
      * @param $driverName
      * @return DriverContract
+     * @throws DriverException
      */
     public function getDriver(string $driverName = null): DriverContract
     {
         $driverName = $driverName ?: $this->getDefaultDriverName();
         if ($this->drivers[$driverName] === null) {
+            $driverClass = config('indexerconfig.searchDriverFactories.' . $driverName);
+            if (!$driverClass) {
+                throw new DriverException('Не указан драйвер поискового движка');
+            }
             $this->drivers[$driverName] = $this->buildDriver(
                 $this->createDriverFactory(config('indexerconfig.searchDriverFactories.' . $driverName))
             );

@@ -7,7 +7,6 @@ namespace Shader2k\SearchIndexer\Drivers\Elasticsearch;
 use Elasticsearch\Client;
 use Exception;
 use ReflectionException;
-use Shader2k\SearchIndexer\DataPreparers\ElasticsearchDataPreparer;
 use Shader2k\SearchIndexer\Drivers\AbstractDriver;
 use Shader2k\SearchIndexer\Exceptions\DriverException;
 use Shader2k\SearchIndexer\Indexable\IndexableCollectionContract;
@@ -26,7 +25,7 @@ class ElasticsearchDriver extends AbstractDriver
     private $coldIndexName;
     private $hotIndexName;
 
-    public function __construct(ElasticsearchDataPreparer $dataPreparer, Client $client)
+    public function __construct(DataPreparerContract $dataPreparer, Client $client)
     {
         $this->dataPreparer = $dataPreparer;
         $this->client = $client;

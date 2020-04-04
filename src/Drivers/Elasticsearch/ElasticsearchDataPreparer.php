@@ -1,8 +1,6 @@
 <?php
 
-
-namespace Shader2k\SearchIndexer\DataPreparers;
-
+namespace Shader2k\SearchIndexer\Drivers\Elasticsearch;
 
 use Shader2k\SearchIndexer\Indexable\IndexableCollectionContract;
 use Shader2k\SearchIndexer\Indexable\IndexableEntityContract;
