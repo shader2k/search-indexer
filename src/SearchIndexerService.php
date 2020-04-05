@@ -11,6 +11,7 @@ use Shader2k\SearchIndexer\Exceptions\IndexingException;
 use Shader2k\SearchIndexer\Exceptions\ProviderException;
 use Shader2k\SearchIndexer\Helpers\Config;
 use Shader2k\SearchIndexer\Helpers\Helper;
+use Shader2k\SearchIndexer\Indexable\IndexableCollection;
 use Shader2k\SearchIndexer\Indexable\IndexableCollectionContract;
 use Shader2k\SearchIndexer\Indexable\IndexableContract;
 use Shader2k\SearchIndexer\Providers\ProviderManager;
@@ -52,9 +53,8 @@ class SearchIndexerService
     {
         $this->setSettings($model);
 
-        $this->model = $model;
         try {
-            if ($this->prepareIndex() === false) {
+            if ($this->prepareIndex(true) === false) {
                 throw new IndexingException('Ошибка индексации: Ошибка подготовки индекса.');
             }
             while ($this->getChunkOfDataFromModel($this->model)) {
@@ -64,7 +64,6 @@ class SearchIndexerService
                 throw new IndexingException('Ошибка индексации: Ошибка деплоя индекса.');
             }
         } catch (IndexingException $e) {
-            echo $e->getCode() . ' ' . $e->getMessage();
             $this->resetSettings();
             return false;
         }
@@ -72,15 +71,34 @@ class SearchIndexerService
         return true;
     }
 
+    private function setSettings($model): void
+    {
+        if (is_string($model)) {
+            Helper::classExists($model, IndexingException::class);
+        }
+
+        Helper::classImplement($model, IndexableContract::class, IndexingException::class);
+
+        /** @var IndexableContract $model */
+        $this->driver = $model::getSearchDriverName();
+        $this->provider = $model::getProviderName();
+        if (is_object($model)) {
+            $this->model = get_class($model);
+        } else {
+            $this->model = $model;
+        }
+
+    }
+
     /**
      * Подготовка индекса
+     * @param bool $reindex
      * @return bool
      * @throws Exceptions\DriverException
-     * @throws ReflectionException
      */
-    protected function prepareIndex(): bool
+    protected function prepareIndex(bool $reindex = false): bool
     {
-        return $this->driverManager->getDriver($this->driver)->prepareIndex($this->model);
+        return $this->driverManager->getDriver($this->driver)->prepareIndex($this->model, $reindex);
     }
 
     /**
@@ -137,14 +155,22 @@ class SearchIndexerService
         $this->provider = null;
     }
 
-    private function setSettings(string $modelClass): void
+    public function indexingEntity(IndexableContract $entity): bool
     {
-        Helper::classExists($modelClass, IndexingException::class);
-        Helper::classImplement($modelClass, IndexableContract::class, IndexingException::class);
+        $this->setSettings($entity);
 
-        /** @var IndexableContract $modelClass */
-        $this->driver = $modelClass::getSearchDriverName();
-        $this->provider = $modelClass::getProviderName();
+        try {
+            if ($this->prepareIndex() === false) {
+                throw new IndexingException('Ошибка индексации: Ошибка подготовки индекса.');
+            }
+            $this->setData(new IndexableCollection($entity));
+            $this->indexing();
+        } catch (IndexingException $e) {
+            $this->resetSettings();
+            return false;
+        }
+        $this->resetSettings();
+        return true;
     }
 
 

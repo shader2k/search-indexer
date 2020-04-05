@@ -17,9 +17,10 @@ interface DriverContract
     /**
      * Подготовка индекса
      * @param string $modelClass
+     * @param bool $reindex необходимо обеспечить бесперебойную работу старого индекса, в случае переиндексации всей модели, если параметр === true
      * @return bool
      */
-    public function prepareIndex(string $modelClass): bool;
+    public function prepareIndex(string $modelClass, bool $reindex = false): bool;
 
     /**
      * Завершающий шаг индексирования.

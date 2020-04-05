@@ -55,13 +55,13 @@ class ElasticsearchDriverTest extends TestCase
             ->times(2)
             ->andReturn(false, true);
         $mockIndices->shouldReceive('existsAlias')
-            ->times(3)
+            ->times(5)
             ->andReturn(true, false, true);
         $mockIndices->shouldReceive('deleteAlias')
             ->once()
             ->andReturn(['acknowledged' => true]);
         $mockIndices->shouldReceive('putAlias')
-            ->once()
+            ->times(2)
             ->andReturn(['acknowledged' => true]);
         $mockIndices->shouldReceive('create')
             ->once()
@@ -85,7 +85,7 @@ class ElasticsearchDriverTest extends TestCase
 
         $mockCat = m::mock(CatNamespace::class);
         $mockCat->shouldReceive('indices')
-            ->once()
+            ->times(2)
             ->andReturn([
                 ['index' => 'indexName'],
                 ['index' => 'indexName2']
@@ -97,7 +97,10 @@ class ElasticsearchDriverTest extends TestCase
             ->andReturn($mockIndices);
 
         $driver = new ElasticsearchDriver($mockDataPreparer, $mockClient);
-        $response = $driver->prepareIndex(UserModel::class);
+        $response = $driver->prepareIndex(UserModel::class, true);
+        $this->assertTrue($response);
+        //тест индексации сущности
+        $response = $driver->prepareIndex(UserModel::class, false);
         $this->assertTrue($response);
 
         //тестирование индексации
@@ -113,5 +116,6 @@ class ElasticsearchDriverTest extends TestCase
         $response = $driver->deploymentIndex();
         $this->assertTrue($response);
     }
+
 
 }

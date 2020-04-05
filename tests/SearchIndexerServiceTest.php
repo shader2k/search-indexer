@@ -17,6 +17,7 @@ use Shader2k\SearchIndexer\Providers\Eloquent\EloquentProvider;
 use Shader2k\SearchIndexer\Providers\ProviderContract;
 use Shader2k\SearchIndexer\Providers\ProviderManager;
 use Shader2k\SearchIndexer\SearchIndexerService;
+use Shader2k\SearchIndexer\Tests\Data\MockObjects;
 use Tests\TestCase;
 
 
@@ -49,8 +50,8 @@ class SearchIndexerServiceTest extends TestCase
             ->times(4)
             ->andReturn($mockDriver);
         $mockDriver->shouldReceive('prepareIndex')
-            ->once()
-            ->andReturn(true);
+            ->times(2)
+            ->andReturn(true, false);
         $mockDriver->shouldReceive('indexingData')
             ->once()
             ->andReturn(true, false);
@@ -65,7 +66,6 @@ class SearchIndexerServiceTest extends TestCase
         $mockProvider->shouldReceive('getChunk')
             ->times(2)
             ->andReturn(
-                $mockIC,
                 $mockIC
             );
 
@@ -75,14 +75,42 @@ class SearchIndexerServiceTest extends TestCase
         $this->assertTrue($index);
 
         //тест ошибки подготовки индекса
-        $mockDriver->shouldReceive('prepareIndex')
-            ->once()
-            ->andReturn(false);
-
         $searchIndexer = new SearchIndexerService($mockProviderManager, $mockDriverManager);
         $index = $searchIndexer->indexingModel(User::class);
         $this->assertFalse($index);
 
+
+    }
+
+    public function testIndexingEntity(): void
+    {
+        $mockIC = m::mock(IndexableCollection::class, IndexableCollectionContract::class)->makePartial();
+        $mockIC->shouldReceive('isEmpty')
+            ->andReturn(false, true);
+
+        $mockProviderManager = m::mock(ProviderManager::class);
+        $mockDriverManager = m::mock(DriverManager::class);
+        $mockDriver = m::mock('alias:' . ElasticsearchDriver::class, DriverContract::class);
+        $mockDriverManager->shouldReceive('getDriver')
+            ->times(3)
+            ->andReturn($mockDriver);
+        $mockDriver->shouldReceive('prepareIndex')
+            ->times(2)
+            ->andReturn(true, false);
+        $mockDriver->shouldReceive('indexingData')
+            ->once()
+            ->andReturn(true, false);
+
+        $user = MockObjects::getUserObject();
+        $searchIndexer = new SearchIndexerService($mockProviderManager, $mockDriverManager);
+        $index = $searchIndexer->indexingEntity($user);
+
+        $this->assertTrue($index);
+
+        //тест ошибки подготовки индекса
+        $searchIndexer = new SearchIndexerService($mockProviderManager, $mockDriverManager);
+        $index = $searchIndexer->indexingEntity($user);
+        $this->assertFalse($index);
 
     }
 

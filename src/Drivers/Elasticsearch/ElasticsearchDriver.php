@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Shader2k\SearchIndexer\Drivers\Elasticsearch;
-
 
 use Elasticsearch\Client;
 use Exception;
@@ -84,19 +82,21 @@ class ElasticsearchDriver extends AbstractDriver
     }
 
     /**
-     * Подготовка индекса
-     * @param string $modelClass
-     * @return bool
+     * @inheritDoc
      * @throws DriverException
      * @throws ReflectionException
      */
-    public function prepareIndex(string $modelClass): bool
+    public function prepareIndex(string $modelClass, bool $reindex = false): bool
     {
         $this->setModel($modelClass);
         //старый индекс
         $this->coldIndexName = $this->getLatestIndexNameForModel();
-        //новый индекс
-        $this->hotIndexName = $this->createIndex();
+        if (!$reindex && $this->coldIndexName !== null) {
+            $this->hotIndexName = $this->coldIndexName;
+        } else {
+            //новый индекс
+            $this->hotIndexName = $this->createIndex();
+        }
         if ($this->hotIndexName === null) {
             throw new DriverException('Ошибка создания индекса. indexType: ' . $this->indexType . ' (elasticsearch)');
         }
