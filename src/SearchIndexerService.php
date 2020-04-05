@@ -129,6 +129,16 @@ class SearchIndexerService
         return $this->driverManager->getDriver($this->driver)->indexingData($this->getData());
     }
 
+    /**
+     * Индексирование
+     * @return bool
+     * @throws Exceptions\DriverException
+     */
+    protected function remove(): bool
+    {
+        return $this->driverManager->getDriver($this->driver)->remove($this->getData());
+    }
+
     public function getData(): IndexableCollectionContract
     {
         return $this->data;
@@ -155,6 +165,13 @@ class SearchIndexerService
         $this->provider = null;
     }
 
+    /**
+     * Индексирование сущности
+     * @param IndexableContract $entity
+     * @return bool
+     * @throws Exceptions\DriverException
+     * @throws ReflectionException
+     */
     public function indexingEntity(IndexableContract $entity): bool
     {
         $this->setSettings($entity);
@@ -169,6 +186,27 @@ class SearchIndexerService
             $this->resetSettings();
             return false;
         }
+        $this->resetSettings();
+        return true;
+    }
+
+    /**
+     * Удаление сущностей из индекса
+     * @param IndexableContract $entity
+     * @return bool
+     * @throws Exceptions\DriverException
+     * @throws ReflectionException
+     */
+    public function removeEntity(IndexableContract $entity): bool
+    {
+        $this->setSettings($entity);
+
+        $this->setData(new IndexableCollection($entity));
+        if (!$this->remove()) {
+            $this->resetSettings();
+            return false;
+        }
+
         $this->resetSettings();
         return true;
     }

@@ -39,7 +39,7 @@ class ElasticsearchDriver extends AbstractDriver
         if ($collection->isEmpty()) {//индексация окончена
             return false;
         }
-        $data = $this->dataPreparer->toBulk($collection, $this->getModelParamsToArray());
+        $data = $this->dataPreparer->forBulk($collection, $this->getModelParamsToArray());
         return $this->bulk($data);
 
     }
@@ -59,7 +59,7 @@ class ElasticsearchDriver extends AbstractDriver
     }
 
     /**
-     * Массовая вставка
+     * Массовая вставка/обновление/удаление
      * @param array $data
      * @return bool
      */
@@ -72,7 +72,7 @@ class ElasticsearchDriver extends AbstractDriver
 
             $response = $this->client->bulk($data);
             if ($response['errors'] === true) {
-                throw new DriverException('Ошибка вставки данных в индекс.');
+                throw new DriverException('Ошибка отрпавки запроса в индекс.');
             }
         } catch (Exception $e) {
             echo $e->getCode() . ' ' . $e->getMessage();
@@ -134,7 +134,7 @@ class ElasticsearchDriver extends AbstractDriver
      */
     private function setModelParams(): void
     {
-        $shortClassName = strtolower(substr(strrchr($this->modelClass, "\\"), 1));
+        $shortClassName = strtolower($this->getClassBaseName($this->modelClass));
         $this->indexType = $this->modelClass;
         $this->indexName = $shortClassName;
         $this->indexAliasWrite = $shortClassName . self::POSTFIX_WRITE;
@@ -349,5 +349,35 @@ class ElasticsearchDriver extends AbstractDriver
         }
 
         return false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function remove(IndexableCollectionContract $collection): bool
+    {
+        if ($collection->isEmpty()) {
+            return false;
+        }
+        $this->setModel($collection->getIndexName());
+        if ($this->existAlias($this->indexAliasRead) === false) {
+            return false;
+        }
+        $data = $this->dataPreparer->forBulk($collection, $this->getModelParamsToArray(), ElasticsearchDataPreparer::BULK_METHOD_DELETE);
+        return $this->bulk($data);
+    }
+
+    /**
+     * Получить базовое имя класса
+     * @param string $class
+     * @return string
+     */
+    private function getClassBaseName(string $class): string
+    {
+        $base = strrchr($class, "\\");
+        if ($base === false) {
+            return $class;
+        }
+        return substr($base, 1);
     }
 }

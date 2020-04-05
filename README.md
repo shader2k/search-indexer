@@ -44,16 +44,19 @@ composer require shader2k/search-indexer
 
 ### Использование сервиса в проекте
 Инициализировать сервис желательно как синглтон
-- `indexingModel` переиндексация всей модели. В данном случае будет создан новый индекс,
+- `indexingModel()` переиндексация всей модели. В данном случае будет создан новый индекс,
  в него проиндексируется модель, затем, атомарной операцией, старый индекс будет подменен новым.
-- `indexingEntity` добавить одну сущность в индекс
+- `indexingEntity()` добавить одну сущность в индекс
+- `removeEntity()` удаление сущности из индекса
 
 ```php
 $searchIndexer = new SearchIndexerService(new ProviderManager(), new DriverManager());
 //переиндексация всей модели
 $searchIndexer->indexingModel(User::class);
 //переиндексация одной сущности
- $index = $searchIndexer->indexingEntity($entity);
+$index = $searchIndexer->indexingEntity($entity);
+//удаление одной сущности
+$index = $searchIndexer->removeEntity($entity);
 ```
 
 
@@ -72,6 +75,8 @@ $indexerService = App::make('SearchIndexerService');
 $indexerService->indexingModel(User::class);
 //переиндексация одной сущности
 $index = $indexerService->indexingEntity($entity);
+//удаление одной сущности
+$index = $indexerService->removeEntity($entity);
 ```
 
 # Расширение пакета

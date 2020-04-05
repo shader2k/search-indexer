@@ -20,7 +20,6 @@ use Shader2k\SearchIndexer\SearchIndexerService;
 use Shader2k\SearchIndexer\Tests\Data\MockObjects;
 use Tests\TestCase;
 
-
 class SearchIndexerServiceTest extends TestCase
 {
 
@@ -71,17 +70,20 @@ class SearchIndexerServiceTest extends TestCase
 
         $searchIndexer = new SearchIndexerService($mockProviderManager, $mockDriverManager);
         $index = $searchIndexer->indexingModel(User::class);
-
         $this->assertTrue($index);
 
         //тест ошибки подготовки индекса
-        $searchIndexer = new SearchIndexerService($mockProviderManager, $mockDriverManager);
         $index = $searchIndexer->indexingModel(User::class);
         $this->assertFalse($index);
 
 
     }
 
+    /**
+     * Тестирование индексации сущности
+     * @throws DriverException
+     * @throws ReflectionException
+     */
     public function testIndexingEntity(): void
     {
         $mockIC = m::mock(IndexableCollection::class, IndexableCollectionContract::class)->makePartial();
@@ -108,8 +110,36 @@ class SearchIndexerServiceTest extends TestCase
         $this->assertTrue($index);
 
         //тест ошибки подготовки индекса
-        $searchIndexer = new SearchIndexerService($mockProviderManager, $mockDriverManager);
         $index = $searchIndexer->indexingEntity($user);
+        $this->assertFalse($index);
+
+    }
+
+    /**
+     * Тестирование удаления сущности
+     * @throws DriverException
+     * @throws ReflectionException
+     */
+    public function testRemoveEntity(): void
+    {
+        $mockProviderManager = m::mock(ProviderManager::class);
+        $mockDriverManager = m::mock(DriverManager::class);
+        $mockDriver = m::mock('alias:' . ElasticsearchDriver::class, DriverContract::class);
+        $mockDriverManager->shouldReceive('getDriver')
+            ->times(2)
+            ->andReturn($mockDriver);
+        $mockDriver->shouldReceive('remove')
+            ->times(2)
+            ->andReturn(true, false);
+
+        $user = MockObjects::getUserObject();
+        $searchIndexer = new SearchIndexerService($mockProviderManager, $mockDriverManager);
+        $index = $searchIndexer->removeEntity($user);
+
+        $this->assertTrue($index);
+
+        //тест ошибки удаления
+        $index = $searchIndexer->removeEntity($user);
         $this->assertFalse($index);
 
     }

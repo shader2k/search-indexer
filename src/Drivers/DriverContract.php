@@ -29,4 +29,11 @@ interface DriverContract
      * @throws DriverException
      */
     public function deploymentIndex(): bool;
+
+    /**
+     * Удаление индекса
+     * @param IndexableCollectionContract $collection
+     * @return bool
+     */
+    public function remove(IndexableCollectionContract $collection): bool;
 }

@@ -42,7 +42,7 @@ class ElasticsearchDriverTest extends TestCase
 
         ];
         $mockDataPreparer = m::mock(ElasticsearchDataPreparer::class, DataPreparerContract::class);
-        $mockDataPreparer->shouldReceive('toBulk')
+        $mockDataPreparer->shouldReceive('forBulk')
             ->once()
             ->andReturn($preparedData);
         $mockClient = m::mock(Client::class);
@@ -115,6 +115,64 @@ class ElasticsearchDriverTest extends TestCase
         //тестирование деплоя нового индекса
         $response = $driver->deploymentIndex();
         $this->assertTrue($response);
+    }
+
+    /**
+     * Переиндексация модели
+     * @throws ReflectionException
+     * @throws DriverException
+     */
+    public function testRemoveEntity(): void
+    {
+        $preparedData = [
+            'body' => [
+                [
+                    'delete' => [
+                        '_index' => 'usermodel_write',
+                        '_type' => 'App/User',
+                        '_id' => 5
+                    ]
+                ],
+                [
+                    'name' => 'John',
+                    'email' => 'test@example.com'
+                ]
+            ]
+
+        ];
+        $mockDataPreparer = m::mock(ElasticsearchDataPreparer::class, DataPreparerContract::class);
+        $mockDataPreparer->shouldReceive('forBulk')
+            ->once()
+            ->andReturn($preparedData);
+
+        $mockIndices = m::mock(IndicesNamespace::class);
+        $mockIndices->shouldReceive('existsAlias')
+            ->times(2)
+            ->andReturn(true, false);
+
+        $mockClient = m::mock(Client::class);
+        $mockClient->shouldReceive('bulk')
+            ->once()
+            ->andReturn(['errors' => false]);
+
+        $mockClient->shouldReceive('indices')
+            ->andReturn($mockIndices);
+
+        $driver = new ElasticsearchDriver($mockDataPreparer, $mockClient);
+        $collection = MockObjects::getIndexableCollection(1);
+        $response = $driver->remove($collection);
+        $this->assertTrue($response);
+
+        //тест "несуществующий алиас индекса"
+        $response = $driver->remove($collection);
+        $this->assertFalse($response);
+
+
+    }
+
+    protected function tearDown(): void
+    {
+        m::close();
     }
 
 
