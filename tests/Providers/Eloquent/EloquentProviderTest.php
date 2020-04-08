@@ -3,11 +3,10 @@
 namespace Tests\Drivers;
 
 use App\User;
+use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Mockery as m;
-use ReflectionException;
-use Shader2k\SearchIndexer\Exceptions\DriverException;
 use Shader2k\SearchIndexer\Indexable\IndexableContract;
 use Shader2k\SearchIndexer\Indexable\IndexableEntityContract;
 use Shader2k\SearchIndexer\Providers\Eloquent\EloquentProvider;
@@ -17,10 +16,15 @@ use Tests\TestCase;
 class EloquentProviderTest extends TestCase
 {
 
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        m::close();
+    }
+
     /**
      * Тест получения чанка
-     * @throws ReflectionException
-     * @throws DriverException
+     * @throws Exception
      */
     public function testGetChunk(): void
     {

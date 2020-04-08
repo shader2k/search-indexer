@@ -5,6 +5,7 @@ namespace Tests\Drivers;
 use Elasticsearch\Client;
 use Elasticsearch\Namespaces\CatNamespace;
 use Elasticsearch\Namespaces\IndicesNamespace;
+use Exception;
 use Mockery as m;
 use ReflectionException;
 use Shader2k\SearchIndexer\Drivers\Elasticsearch\DataPreparerContract;
@@ -121,6 +122,7 @@ class ElasticsearchDriverTest extends TestCase
      * Переиндексация модели
      * @throws ReflectionException
      * @throws DriverException
+     * @throws Exception
      */
     public function testRemoveEntity(): void
     {
@@ -172,6 +174,7 @@ class ElasticsearchDriverTest extends TestCase
 
     protected function tearDown(): void
     {
+        parent::tearDown();
         m::close();
     }
 

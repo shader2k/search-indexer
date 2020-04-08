@@ -9,14 +9,14 @@ interface IndexableCollectionContract
 
     /**
      * indexableEntityContract constructor.
-     * @param IndexableContract $item
+     * @param IndexableContract ...$item
      */
     public function __construct(IndexableContract ...$item);
 
     /**
      * Добавление в коллекцию
      * @param IndexableContract $item
-     * @return $this
+     * @return void
      */
     public function push(IndexableContract $item): void;
 

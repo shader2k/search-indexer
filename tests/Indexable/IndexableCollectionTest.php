@@ -3,14 +3,22 @@
 namespace Tests\Drivers;
 
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Mockery as m;
 use Shader2k\SearchIndexer\Indexable\IndexableCollection;
 use Shader2k\SearchIndexer\Indexable\IndexableEntity;
 use Shader2k\SearchIndexer\Tests\Data\MockObjects;
+use Shader2k\SearchIndexer\Tests\Data\UserModel;
 use Tests\TestCase;
 
 class IndexableCollectionTest extends TestCase
 {
     use DatabaseMigrations;
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        m::close();
+    }
 
     /**
      * тестирование заполнения коллекции через конструктор
@@ -57,7 +65,7 @@ class IndexableCollectionTest extends TestCase
         $collection->push($mockUser);
         $indexName = $collection->getIndexName();
 
-        $this->assertStringContainsString('fakeIndexName', $indexName);
+        $this->assertStringContainsString(UserModel::class, $indexName);
     }
 
     /**

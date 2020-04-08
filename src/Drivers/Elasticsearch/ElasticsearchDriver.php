@@ -11,8 +11,8 @@ use Shader2k\SearchIndexer\Indexable\IndexableCollectionContract;
 
 class ElasticsearchDriver extends AbstractDriver
 {
-    const POSTFIX_WRITE = '_write';
-    const POSTFIX_READ  = '_read';
+    public const POSTFIX_WRITE = '_write';
+    public const POSTFIX_READ  = '_read';
 
     private $dataPreparer;
     private $client;
@@ -101,13 +101,11 @@ class ElasticsearchDriver extends AbstractDriver
             throw new DriverException('Ошибка создания индекса. indexType: ' . $this->indexType . ' (elasticsearch)');
         }
 
-        if ($this->existAlias($this->indexAliasWrite)) {
-            //проверка правильность привязки алиаса
-            if (false === $this->existAlias($this->indexAliasWrite, $this->hotIndexName)) {
-                if (false === $this->deleteAlias($this->indexAliasWrite, $this->findIndexNameByAlias($this->indexAliasWrite))) {
-                    throw new DriverException('Ошибка удаления алиаса у индекса . indexType: ' . $this->indexType . ' (elasticsearch)');
-                }
-            }
+        //проверка правильность привязки алиаса
+        if ($this->existAlias($this->indexAliasWrite)
+            && (false === $this->existAlias($this->indexAliasWrite, $this->hotIndexName))
+            && false === $this->deleteAlias($this->indexAliasWrite, $this->findIndexNameByAlias($this->indexAliasWrite))) {
+            throw new DriverException('Ошибка удаления алиаса у индекса . indexType: ' . $this->indexType . ' (elasticsearch)');
         }
 
         if ($this->addAlias($this->indexAliasWrite, $this->hotIndexName) === false) {
@@ -120,7 +118,6 @@ class ElasticsearchDriver extends AbstractDriver
     /**
      * Установить модель
      * @param string $modelClass
-     * @throws ReflectionException
      * @throws DriverException
      */
     public function setModel(string $modelClass): void
@@ -345,7 +342,7 @@ class ElasticsearchDriver extends AbstractDriver
                 return true;
             }
         } catch (Exception $e) {
-            echo $e->getMessage() . " " . $e->getTrace();
+            echo $e->getMessage() . ' ' . $e->getTrace();
         }
 
         return false;

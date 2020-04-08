@@ -9,7 +9,7 @@ interface ProviderContract
     /**
      * @param string $model
      * @param int $chunkSize
-     * @return array
+     * @return IndexableCollectionContract
      */
     public function getChunk(string $model, int $chunkSize): IndexableCollectionContract;
 

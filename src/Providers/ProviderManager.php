@@ -38,7 +38,7 @@ class ProviderManager
     }
 
     /**
-     * Создать драйвер
+     * Создать провайдер
      * @param ProviderFactoryContract $providerFactory
      * @return ProviderContract
      */

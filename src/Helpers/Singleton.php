@@ -4,7 +4,7 @@
 namespace Shader2k\SearchIndexer\Helpers;
 
 
-use Exception;
+use RuntimeException;
 
 class Singleton
 {
@@ -25,7 +25,7 @@ class Singleton
 
     public function __wakeup()
     {
-        throw new Exception("Cannot unserialize singleton");
+        throw new RuntimeException('Cannot unserialize singleton');
     }
 
     protected function __clone()

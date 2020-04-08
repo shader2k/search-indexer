@@ -1,6 +1,6 @@
 <?php
 
-namespace Shader2k\SearchIndexer\Tests;
+namespace Tests;
 
 use App\User;
 use Mockery as m;
@@ -18,8 +18,13 @@ use Shader2k\SearchIndexer\Providers\ProviderContract;
 use Shader2k\SearchIndexer\Providers\ProviderManager;
 use Shader2k\SearchIndexer\SearchIndexerService;
 use Shader2k\SearchIndexer\Tests\Data\MockObjects;
-use Tests\TestCase;
 
+/**
+ * @runTestsInSeparateProcesses
+ * @preserveGlobalState disabled
+ * Class SearchIndexerServiceTest
+ * @package Tests
+ */
 class SearchIndexerServiceTest extends TestCase
 {
 
@@ -146,6 +151,7 @@ class SearchIndexerServiceTest extends TestCase
 
     protected function tearDown(): void
     {
+        parent::tearDown();
         m::close();
     }
 

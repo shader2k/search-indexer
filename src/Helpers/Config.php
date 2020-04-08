@@ -5,6 +5,7 @@ namespace Shader2k\SearchIndexer\Helpers;
 
 
 use Exception;
+use RuntimeException;
 
 class Config extends Singleton
 {
@@ -43,7 +44,7 @@ class Config extends Singleton
             return $this->configs[$key];
         }
 
-        throw new Exception('Config not load');
+        throw new RuntimeException('Config not load');
     }
 
 }

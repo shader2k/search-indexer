@@ -14,7 +14,9 @@ if (!function_exists('env')) {
     {
         $value = getenv($key);
 
-        if ($value === false) return value($default);
+        if ($value === false) {
+            return value($default);
+        }
 
         switch (strtolower($value)) {
             case 'true':
@@ -39,8 +41,7 @@ if (!function_exists('env')) {
     }
 }
 
-if ( ! function_exists('value'))
-{
+if (!function_exists('value')) {
     /**
      * Return the default value of the given value.
      *

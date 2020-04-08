@@ -4,6 +4,7 @@ namespace Tests\Drivers;
 
 use Exception;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Mockery as m;
 use Shader2k\SearchIndexer\Indexable\IndexableEntity;
 use Shader2k\SearchIndexer\Tests\Data\MockObjects;
 use Tests\TestCase;
@@ -11,6 +12,12 @@ use Tests\TestCase;
 class IndexableEntityTest extends TestCase
 {
     use DatabaseMigrations;
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        m::close();
+    }
 
     /**
      * тестирование создания индексируемой сущности

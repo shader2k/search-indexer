@@ -50,7 +50,7 @@ class UserModel implements IndexableContract
      */
     public function getIndexName(): string
     {
-        return 'fakeIndexName';
+        return __CLASS__;
     }
 
     /**

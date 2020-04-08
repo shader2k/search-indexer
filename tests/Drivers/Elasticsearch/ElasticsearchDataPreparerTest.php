@@ -3,6 +3,7 @@
 namespace Tests\Drivers;
 
 use Exception;
+use Mockery as m;
 use Shader2k\SearchIndexer\Drivers\Elasticsearch\ElasticsearchDataPreparer;
 use Shader2k\SearchIndexer\Indexable\IndexableCollection;
 use Shader2k\SearchIndexer\Tests\Data\MockObjects;
@@ -10,6 +11,11 @@ use Tests\TestCase;
 
 class ElasticsearchDataPreparerTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        m::close();
+    }
 
     /**
      * приведение данных в формат Elasticsearch для Bulk

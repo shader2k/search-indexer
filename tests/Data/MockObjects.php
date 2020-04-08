@@ -2,7 +2,6 @@
 
 namespace Shader2k\SearchIndexer\Tests\Data;
 
-use App\User;
 use Exception;
 use Shader2k\SearchIndexer\Indexable\IndexableCollection;
 use Shader2k\SearchIndexer\Indexable\IndexableCollectionContract;
@@ -26,7 +25,7 @@ class MockObjects
         $userRawData = self::getRawUserData($count);
         if (!empty($fields)) {
             foreach ($fields as $field) {
-                $collection->push(factory(User::class)->make($field));
+                $collection->push(self::getUserObject($field));
             }
             return $collection;
         }
