@@ -1,13 +1,13 @@
 <?php
 
-namespace Tests\Drivers;
+namespace Shader2k\SearchIndexer\Tests\Drivers\Elasticsearch;
 
 use Exception;
 use Mockery as m;
 use Shader2k\SearchIndexer\Drivers\Elasticsearch\ElasticsearchDataPreparer;
 use Shader2k\SearchIndexer\Indexable\IndexableCollection;
 use Shader2k\SearchIndexer\Tests\Data\MockObjects;
-use Tests\TestCase;
+use Shader2k\SearchIndexer\Tests\TestCase;
 
 class ElasticsearchDataPreparerTest extends TestCase
 {

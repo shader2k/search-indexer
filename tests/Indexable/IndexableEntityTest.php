@@ -1,18 +1,15 @@
 <?php
 
-namespace Tests\Drivers;
+namespace Shader2k\SearchIndexer\Tests\Indexable;
 
 use Exception;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Mockery as m;
 use Shader2k\SearchIndexer\Indexable\IndexableEntity;
 use Shader2k\SearchIndexer\Tests\Data\MockObjects;
-use Tests\TestCase;
+use Shader2k\SearchIndexer\Tests\TestCase;
 
 class IndexableEntityTest extends TestCase
 {
-    use DatabaseMigrations;
-
     protected function tearDown(): void
     {
         parent::tearDown();

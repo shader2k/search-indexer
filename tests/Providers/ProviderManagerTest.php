@@ -1,10 +1,10 @@
 <?php
 
-namespace Tests\Providers;
+namespace Shader2k\SearchIndexer\Tests\Providers;
 
 use Shader2k\SearchIndexer\Providers\Eloquent\EloquentProvider;
 use Shader2k\SearchIndexer\Providers\ProviderManager;
-use Tests\TestCase;
+use Shader2k\SearchIndexer\Tests\TestCase;
 
 /**
  * @runTestsInSeparateProcesses
