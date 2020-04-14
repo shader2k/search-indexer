@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests;
+namespace Shader2k\SearchIndexer\Tests;
 
 use App\User;
 use Mockery as m;

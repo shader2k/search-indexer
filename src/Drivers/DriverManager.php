@@ -21,7 +21,7 @@ class DriverManager
     public function getDriver(string $driverName = null): DriverContract
     {
         $driverName = $driverName ?: $this->getDefaultDriverName();
-        if ($this->drivers[$driverName] === null) {
+        if (empty($this->drivers[$driverName])) {
             $driverClass = config('indexerconfig.searchDriverFactories.' . $driverName);
             if (!$driverClass) {
                 throw new DriverException('Не указан драйвер поискового движка');

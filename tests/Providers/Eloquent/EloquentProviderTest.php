@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Drivers;
+namespace Shader2k\SearchIndexer\Tests\Providers\Eloquent;
 
 use App\User;
 use Exception;
@@ -11,7 +11,7 @@ use Shader2k\SearchIndexer\Indexable\IndexableContract;
 use Shader2k\SearchIndexer\Indexable\IndexableEntityContract;
 use Shader2k\SearchIndexer\Providers\Eloquent\EloquentProvider;
 use Shader2k\SearchIndexer\Tests\Data\MockObjects;
-use Tests\TestCase;
+use Shader2k\SearchIndexer\Tests\TestCase;
 
 class EloquentProviderTest extends TestCase
 {

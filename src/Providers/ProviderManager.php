@@ -20,7 +20,7 @@ class ProviderManager
     public function getProvider(string $providerName = null): ProviderContract
     {
         $providerName = $providerName ?: $this->getDefaultProviderName();
-        if ($this->providers[$providerName] === null) {
+        if (empty($this->providers[$providerName])) {
             $providerClass = config('indexerconfig.dataProviderFactories.' . $providerName);
             if (!$providerClass) {
                 throw new ProviderException('Не указан драйвер поискового движка');

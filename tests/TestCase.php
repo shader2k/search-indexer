@@ -1,0 +1,10 @@
+<?php
+
+namespace Shader2k\SearchIndexer\Tests;
+
+use PHPUnit\Framework\TestCase as BaseTestCase;
+
+class TestCase extends BaseTestCase
+{
+
+}

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Drivers;
+namespace Shader2k\SearchIndexer\Tests\Drivers\Elasticsearch;
 
 use Elasticsearch\Client;
 use Elasticsearch\Namespaces\CatNamespace;
@@ -14,7 +14,7 @@ use Shader2k\SearchIndexer\Drivers\Elasticsearch\ElasticsearchDriver;
 use Shader2k\SearchIndexer\Exceptions\DriverException;
 use Shader2k\SearchIndexer\Tests\Data\MockObjects;
 use Shader2k\SearchIndexer\Tests\Data\UserModel;
-use Tests\TestCase;
+use Shader2k\SearchIndexer\Tests\TestCase;
 
 class ElasticsearchDriverTest extends TestCase
 {
