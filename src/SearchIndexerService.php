@@ -33,12 +33,26 @@ class SearchIndexerService
         $autoloader = new ReflectionClass(ClassLoader::class);
         $appRootPath = dirname($autoloader->getFileName(), 3);
         $this->env = Dotenv::create($appRootPath);
-        $this->env->load();
+        $this->initializeEnv($appRootPath);
         $this->config = Config::getInstance();
         $this->config->load($appRootPath . '/config/indexerconfig.php');
         $this->providerManager = $providerManager;
         $this->driverManager = $driverManager;
         $this->providerChunkSize = (int)config('indexerconfig.dataProviderChunkSize');
+    }
+
+    /**
+     * Инициализирует переменные из .env файла в случае, если он существует
+     *
+     * @access	protected
+     * @param	string	$appRootPath
+     * @return	void
+     */
+    protected function initializeEnv(string $appRootPath): void
+    {
+        if (file_exists($appRootPath . '/.env')) {
+            $this->env->load();
+        }
     }
 
     /**
