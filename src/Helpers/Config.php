@@ -40,7 +40,7 @@ class Config extends Singleton
      */
     public function getConfig(string $key): \Noodlehaus\Config
     {
-        if ($this->configs[$key] !== null) {
+        if (! empty($this->configs[$key])) {
             return $this->configs[$key];
         }
 
