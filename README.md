@@ -8,7 +8,6 @@
 
 Установка через Composer
 ```
-composer config repositories.shader2k vcs https://github.com/shader2k/search-indexer
 composer require shader2k/search-indexer
 ```
 ## Настройка
