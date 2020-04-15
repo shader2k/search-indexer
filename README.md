@@ -1,3 +1,5 @@
+![PHPUnit](https://github.com/shader2k/search-indexer/workflows/PHPUnit/badge.svg?branch=master)
+
 # Elasticsearch zero downtime reindexing
 
 Переиндексация модели с нулевым временем простоя
