@@ -16,5 +16,10 @@ trait IndexableTrait
         return null;
     }
 
+    public static function getIndexParameters(): ?array
+    {
+        return null;
+    }
+
 
 }

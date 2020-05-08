@@ -22,6 +22,7 @@ class ElasticsearchDriver extends AbstractDriver
     private $indexAliasRead;
     private $coldIndexName;
     private $hotIndexName;
+    private $indexParameters;
 
     public function __construct(DataPreparerContract $dataPreparer, Client $client)
     {
@@ -136,7 +137,22 @@ class ElasticsearchDriver extends AbstractDriver
         $this->indexName = $shortClassName;
         $this->indexAliasWrite = $shortClassName . self::POSTFIX_WRITE;
         $this->indexAliasRead = $shortClassName . self::POSTFIX_READ;
+        $this->indexParameters = $this->modelClass::getIndexParameters();
 
+    }
+
+    /**
+     * Получить базовое имя класса
+     * @param string $class
+     * @return string
+     */
+    private function getClassBaseName(string $class): string
+    {
+        $base = strrchr($class, "\\");
+        if ($base === false) {
+            return $class;
+        }
+        return substr($base, 1);
     }
 
     /**
@@ -185,6 +201,7 @@ class ElasticsearchDriver extends AbstractDriver
         ];
         if ($this->client->indices()->exists($params) === false) {
             try {
+                $params = $this->addIndexParameters($params);
                 $response = $this->client->indices()->create($params);
 
                 if ($response['acknowledged'] === true) {
@@ -196,6 +213,25 @@ class ElasticsearchDriver extends AbstractDriver
         }
 
         return null;
+    }
+
+    /**
+     * Добавление параметров индекса
+     * @param array $params
+     * @return array
+     */
+    private function addIndexParameters(array $params): array
+    {
+        if (empty($this->indexParameters)) {
+            return $params;
+        }
+        if (!empty($this->indexParameters['settings'])) {
+            $params['body']['settings'] = $this->indexParameters['settings'];
+        }
+        if (!empty($this->indexParameters['mappings'])) {
+            $params['body']['mappings'] = $this->indexParameters['mappings'];
+        }
+        return $params;
     }
 
     /**
@@ -362,19 +398,5 @@ class ElasticsearchDriver extends AbstractDriver
         }
         $data = $this->dataPreparer->forBulk($collection, $this->getModelParamsToArray(), ElasticsearchDataPreparer::BULK_METHOD_DELETE);
         return $this->bulk($data);
-    }
-
-    /**
-     * Получить базовое имя класса
-     * @param string $class
-     * @return string
-     */
-    private function getClassBaseName(string $class): string
-    {
-        $base = strrchr($class, "\\");
-        if ($base === false) {
-            return $class;
-        }
-        return substr($base, 1);
     }
 }

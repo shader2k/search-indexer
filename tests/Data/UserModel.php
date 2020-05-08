@@ -48,6 +48,31 @@ class UserModel implements IndexableContract
     /**
      * @inheritDoc
      */
+    public static function getIndexParameters(): ?array
+    {
+        return [
+            'settings' => [
+                'number_of_shards' => 1,
+            ],
+            'mappings' => [
+                '_source' => [
+                    'enabled' => true
+                ],
+                'properties' => [
+                    'name' => [
+                        'type' => 'string'
+                    ],
+                    'email' => [
+                        'type' => 'string'
+                    ]
+                ]
+            ]
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getIndexName(): string
     {
         return __CLASS__;
