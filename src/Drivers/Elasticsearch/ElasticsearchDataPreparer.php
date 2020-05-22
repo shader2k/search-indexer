@@ -42,7 +42,6 @@ class ElasticsearchDataPreparer implements DataPreparerContract
             $preparedData['body'][] = [
                 $method => [
                     '_index' => $modelParams['indexAliasWrite'],
-                    '_type' => $modelParams['indexType'],
                     '_id' => $item->getIdentifier(),
                 ],
             ];
