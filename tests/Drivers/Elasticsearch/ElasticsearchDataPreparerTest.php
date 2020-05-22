@@ -24,7 +24,6 @@ class ElasticsearchDataPreparerTest extends TestCase
     public function testPrepareDataForBulk(): void
     {
         $modelParams = [
-            'indexType' => 'App/User',
             'indexAliasWrite' => 'user_write',
         ];
         $data = [
@@ -46,7 +45,6 @@ class ElasticsearchDataPreparerTest extends TestCase
                 [
                     'index' => [
                         '_index' => 'user_write',
-                        '_type' => 'App/User',
                         '_id' => 5
                     ]
                 ],
@@ -57,7 +55,6 @@ class ElasticsearchDataPreparerTest extends TestCase
                 [
                     'index' => [
                         '_index' => 'user_write',
-                        '_type' => 'App/User',
                         '_id' => 1
                     ]
                 ],
@@ -73,14 +70,12 @@ class ElasticsearchDataPreparerTest extends TestCase
                 [
                     'delete' => [
                         '_index' => 'user_write',
-                        '_type' => 'App/User',
                         '_id' => 5
                     ]
                 ],
                 [
                     'delete' => [
                         '_index' => 'user_write',
-                        '_type' => 'App/User',
                         '_id' => 1
                     ]
                 ]
