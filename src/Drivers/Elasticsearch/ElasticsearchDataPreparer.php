@@ -39,11 +39,14 @@ class ElasticsearchDataPreparer implements DataPreparerContract
         $preparedData = [];
         /** @var IndexableEntityContract $item */
         foreach ($collection as $item) {
+            $params = [
+                '_index' => $modelParams['indexAliasWrite'],
+            ];
+            if ($item->getIdentifier()) {
+                $params['_id'] = $item->getIdentifier();
+            }
             $preparedData['body'][] = [
-                $method => [
-                    '_index' => $modelParams['indexAliasWrite'],
-                    '_id' => $item->getIdentifier(),
-                ],
+                $method => $params,
             ];
             if ($method !== self::BULK_METHOD_DELETE) {
                 $preparedData['body'][] = $item->getData();
