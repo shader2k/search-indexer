@@ -44,7 +44,7 @@ class ProviderManager
      */
     private function buildProvider(ProviderFactoryContract $providerFactory): ProviderContract
     {
-        return (new $providerFactory())->buildProvider();
+        return $providerFactory->buildProvider();
 
     }
 
