@@ -19,7 +19,12 @@ class ElasticsearchDriverFactory implements DriverFactoryContract
     {
         $dataPreparer = new ElasticsearchDataPreparer();
         //todo проверка на существование env параметра
-        $client = ClientBuilder::create()->setHosts([config('indexerconfig.elasticsearchHost')])->build();
-        return new ElasticsearchDriver($dataPreparer, $client);
+        $builder = ClientBuilder::create()->setHosts([config('indexerconfig.elasticsearchHost')]);
+        $login = config('indexerconfig.elasticsearchLogin');
+
+        if (!empty($login)) {
+            $builder->setBasicAuthentication($login, config('indexerconfig.elasticsearchPassword'));
+        }
+        return new ElasticsearchDriver($dataPreparer, $builder->build());
     }
 }

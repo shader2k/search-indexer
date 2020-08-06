@@ -45,8 +45,7 @@ class DriverManager
      */
     private function buildDriver(DriverFactoryContract $driverFactory): DriverContract
     {
-        /** @var DriverFactoryContract $driverFactory */
-        return (new $driverFactory())->buildDriver();
+        return $driverFactory->buildDriver();
 
     }
 
