@@ -1,14 +1,14 @@
 <?php
 
-
 namespace Shader2k\SearchIndexer\Indexable;
-
 
 use ArrayIterator;
 use IteratorAggregate;
+use Shader2k\SearchIndexer\Contracts\Indexable\IndexableCollectionContract;
+use Shader2k\SearchIndexer\Contracts\Indexable\IndexableContract;
 use Traversable;
 
-class IndexableCollection implements IndexableCollectionContract, IteratorAggregate
+class IndexableCollection implements \Shader2k\SearchIndexer\Contracts\Indexable\IndexableCollectionContract, IteratorAggregate
 {
 
 

@@ -12,8 +12,8 @@ use Shader2k\SearchIndexer\Exceptions\ProviderException;
 use Shader2k\SearchIndexer\Helpers\Config;
 use Shader2k\SearchIndexer\Helpers\Helper;
 use Shader2k\SearchIndexer\Indexable\IndexableCollection;
-use Shader2k\SearchIndexer\Indexable\IndexableCollectionContract;
-use Shader2k\SearchIndexer\Indexable\IndexableContract;
+use Shader2k\SearchIndexer\Contracts\Indexable\IndexableCollectionContract;
+use Shader2k\SearchIndexer\Contracts\Indexable\IndexableContract;
 use Shader2k\SearchIndexer\Providers\ProviderManager;
 
 class SearchIndexerService
@@ -93,7 +93,7 @@ class SearchIndexerService
 
         Helper::classImplement($model, IndexableContract::class, IndexingException::class);
 
-        /** @var IndexableContract $model */
+        /** @var \Shader2k\SearchIndexer\Contracts\Indexable\IndexableContract $model */
         $this->driver = $model::getSearchDriverName();
         $this->provider = $model::getProviderName();
         if (is_object($model)) {
@@ -170,7 +170,7 @@ class SearchIndexerService
 
     /**
      * Индексирование сущности
-     * @param IndexableContract $entity
+     * @param \Shader2k\SearchIndexer\Contracts\Indexable\IndexableContract $entity
      * @return bool
      * @throws Exceptions\DriverException
      * @throws ReflectionException

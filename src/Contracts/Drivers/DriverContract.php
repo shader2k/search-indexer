@@ -1,9 +1,9 @@
 <?php
 
-namespace Shader2k\SearchIndexer\Drivers;
+namespace Shader2k\SearchIndexer\Contracts\Drivers;
 
 use Shader2k\SearchIndexer\Exceptions\DriverException;
-use Shader2k\SearchIndexer\Indexable\IndexableCollectionContract;
+use Shader2k\SearchIndexer\Contracts\Indexable\IndexableCollectionContract;
 
 interface DriverContract
 {

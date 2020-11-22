@@ -1,6 +1,8 @@
 <?php
 
-namespace Shader2k\SearchIndexer\Drivers;
+namespace Shader2k\SearchIndexer\Contracts\Drivers;
+
+use Shader2k\SearchIndexer\Contracts\Drivers\DriverContract;
 
 interface DriverFactoryContract
 {

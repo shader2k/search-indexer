@@ -1,8 +1,9 @@
 <?php
 
-
 namespace Shader2k\SearchIndexer\Indexable;
 
+use Shader2k\SearchIndexer\Contracts\Indexable\IndexableContract;
+use Shader2k\SearchIndexer\Contracts\Indexable\IndexableEntityContract;
 
 class IndexableEntity implements IndexableEntityContract
 {

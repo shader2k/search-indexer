@@ -8,8 +8,8 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Shader2k\SearchIndexer\Indexable\IndexableCollection;
-use Shader2k\SearchIndexer\Indexable\IndexableCollectionContract;
-use Shader2k\SearchIndexer\Providers\ProviderContract;
+use Shader2k\SearchIndexer\Contracts\Indexable\IndexableCollectionContract;
+use Shader2k\SearchIndexer\Contracts\Providers\ProviderContract;
 
 class EloquentProvider implements ProviderContract
 {

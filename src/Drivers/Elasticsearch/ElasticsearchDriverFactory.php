@@ -1,19 +1,17 @@
 <?php
 
-
 namespace Shader2k\SearchIndexer\Drivers\Elasticsearch;
 
-
 use Elasticsearch\ClientBuilder;
-use Shader2k\SearchIndexer\Drivers\DriverContract;
-use Shader2k\SearchIndexer\Drivers\DriverFactoryContract;
+use Shader2k\SearchIndexer\Contracts\Drivers\DriverContract;
+use Shader2k\SearchIndexer\Contracts\Drivers\DriverFactoryContract;
 
 class ElasticsearchDriverFactory implements DriverFactoryContract
 {
 
     /**
      * Получение экземпляра драйвера
-     * @return DriverContract
+     * @return \Shader2k\SearchIndexer\Contracts\Drivers\DriverContract
      */
     public function buildDriver(): DriverContract
     {

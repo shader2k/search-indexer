@@ -1,10 +1,8 @@
 <?php
 
-
 namespace Shader2k\SearchIndexer\Tests\Data;
 
-
-use Shader2k\SearchIndexer\Indexable\IndexableContract;
+use Shader2k\SearchIndexer\Contracts\Indexable\IndexableContract;
 
 class UserModel implements IndexableContract
 {

@@ -1,6 +1,8 @@
 <?php
 
-namespace Shader2k\SearchIndexer\Providers;
+namespace Shader2k\SearchIndexer\Contracts\Providers;
+
+use Shader2k\SearchIndexer\Contracts\Providers\ProviderContract;
 
 interface ProviderFactoryContract
 {

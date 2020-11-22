@@ -1,11 +1,9 @@
 <?php
 
-
 namespace Shader2k\SearchIndexer\Providers\Eloquent;
 
-
-use Shader2k\SearchIndexer\Providers\ProviderContract;
-use Shader2k\SearchIndexer\Providers\ProviderFactoryContract;
+use Shader2k\SearchIndexer\Contracts\Providers\ProviderContract;
+use Shader2k\SearchIndexer\Contracts\Providers\ProviderFactoryContract;
 
 class EloquentProviderFactory implements ProviderFactoryContract
 {

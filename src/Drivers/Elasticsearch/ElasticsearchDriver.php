@@ -7,7 +7,7 @@ use Exception;
 use ReflectionException;
 use Shader2k\SearchIndexer\Drivers\AbstractDriver;
 use Shader2k\SearchIndexer\Exceptions\DriverException;
-use Shader2k\SearchIndexer\Indexable\IndexableCollectionContract;
+use Shader2k\SearchIndexer\Contracts\Indexable\IndexableCollectionContract;
 
 class ElasticsearchDriver extends AbstractDriver
 {
@@ -32,7 +32,7 @@ class ElasticsearchDriver extends AbstractDriver
 
     /**
      * Индексирование данных
-     * @param IndexableCollectionContract $collection
+     * @param \Shader2k\SearchIndexer\Contracts\Indexable\IndexableCollectionContract $collection
      * @return bool
      */
     public function indexingData(IndexableCollectionContract $collection): bool

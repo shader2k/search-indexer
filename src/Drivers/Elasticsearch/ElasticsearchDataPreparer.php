@@ -3,8 +3,8 @@
 namespace Shader2k\SearchIndexer\Drivers\Elasticsearch;
 
 use Shader2k\SearchIndexer\Exceptions\DriverException;
-use Shader2k\SearchIndexer\Indexable\IndexableCollectionContract;
-use Shader2k\SearchIndexer\Indexable\IndexableEntityContract;
+use Shader2k\SearchIndexer\Contracts\Indexable\IndexableCollectionContract;
+use Shader2k\SearchIndexer\Contracts\Indexable\IndexableEntityContract;
 
 class ElasticsearchDataPreparer implements DataPreparerContract
 {
@@ -37,7 +37,7 @@ class ElasticsearchDataPreparer implements DataPreparerContract
         }
 
         $preparedData = [];
-        /** @var IndexableEntityContract $item */
+        /** @var \Shader2k\SearchIndexer\Contracts\Indexable\IndexableEntityContract $item */
         foreach ($collection as $item) {
             $params = [
                 '_index' => $modelParams['indexAliasWrite'],

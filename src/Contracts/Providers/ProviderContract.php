@@ -1,15 +1,15 @@
 <?php
 
-namespace Shader2k\SearchIndexer\Providers;
+namespace Shader2k\SearchIndexer\Contracts\Providers;
 
-use Shader2k\SearchIndexer\Indexable\IndexableCollectionContract;
+use Shader2k\SearchIndexer\Contracts\Indexable\IndexableCollectionContract;
 
 interface ProviderContract
 {
     /**
      * @param string $model
      * @param int $chunkSize
-     * @return IndexableCollectionContract
+     * @return \Shader2k\SearchIndexer\Indexable\Indexable\IndexableCollectionContract
      */
     public function getChunk(string $model, int $chunkSize): IndexableCollectionContract;
 

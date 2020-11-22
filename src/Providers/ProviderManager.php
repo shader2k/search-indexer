@@ -1,9 +1,9 @@
 <?php
 
-
 namespace Shader2k\SearchIndexer\Providers;
 
-
+use Shader2k\SearchIndexer\Contracts\Providers\ProviderContract;
+use Shader2k\SearchIndexer\Contracts\Providers\ProviderFactoryContract;
 use Shader2k\SearchIndexer\Exceptions\ProviderException;
 use Shader2k\SearchIndexer\Helpers\Helper;
 
