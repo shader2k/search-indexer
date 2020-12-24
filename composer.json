@@ -18,7 +18,7 @@
     },
     "license": "MIT",
     "require": {
-        "php": "^7.1",
+        "php": "^7.1 || ^8.0",
         "vlucas/phpdotenv": "^3.6",
         "hassankhan/config": "^2.1",
         "ext-json": "*"
