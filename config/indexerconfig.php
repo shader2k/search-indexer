@@ -1,16 +1,13 @@
 <?php
 
-use Shader2k\SearchIndexer\Drivers\Elasticsearch\ElasticsearchDriverFactory;
-use Shader2k\SearchIndexer\Providers\Eloquent\EloquentProviderFactory;
-
 return [
     'searchDriverFactories' => [
-        'elasticsearch' => ElasticsearchDriverFactory::class
+        'elasticsearch' => 'YourDriver\ElasticsearchDriverFactoryClass'
     ],
     'searchDriverNameDefault' => 'elasticsearch',
 
     'dataProviderFactories'   => [
-        'eloquent' => EloquentProviderFactory::class
+        'eloquent' => 'YourProvider\EloquentProviderFactoryClass'
     ],
     'dataProviderNameDefault' => 'eloquent',
     'dataProviderChunkSize'   => env('DATA_PROVIDER_CHUNK_SIZE', 100),

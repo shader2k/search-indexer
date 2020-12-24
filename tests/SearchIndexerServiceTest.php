@@ -7,17 +7,16 @@ use Mockery as m;
 use ReflectionException;
 use Shader2k\SearchIndexer\Contracts\Drivers\DriverContract;
 use Shader2k\SearchIndexer\Drivers\DriverManager;
-use Shader2k\SearchIndexer\Drivers\Elasticsearch\ElasticsearchDriver;
 use Shader2k\SearchIndexer\Exceptions\DriverException;
 use Shader2k\SearchIndexer\Exceptions\ProviderException;
 use Shader2k\SearchIndexer\Indexable\IndexableCollection;
 use Shader2k\SearchIndexer\Contracts\Indexable\IndexableCollectionContract;
 use Shader2k\SearchIndexer\Contracts\Indexable\IndexableContract;
-use Shader2k\SearchIndexer\Providers\Eloquent\EloquentProvider;
 use Shader2k\SearchIndexer\Contracts\Providers\ProviderContract;
 use Shader2k\SearchIndexer\Providers\ProviderManager;
 use Shader2k\SearchIndexer\SearchIndexerService;
 use Shader2k\SearchIndexer\Tests\Data\MockObjects;
+use Shader2k\SearchIndexer\Tests\Data\UserModel;
 
 /**
  * @runTestsInSeparateProcesses
@@ -40,7 +39,7 @@ class SearchIndexerServiceTest extends TestCase
         $mockIC->shouldReceive('isEmpty')
             ->andReturn(false, true);
 
-        $mockUser = m::mock('alias:' . User::class, IndexableContract::class);
+        $mockUser = m::mock('alias:' . UserModel::class, IndexableContract::class);
         $mockUser->shouldReceive('getProviderName')->times(2)
             ->andReturn('ProviderName');
         $mockUser->shouldReceive('getSearchDriverName')->times(2)
@@ -48,8 +47,8 @@ class SearchIndexerServiceTest extends TestCase
 
         $mockProviderManager = m::mock(ProviderManager::class);
         $mockDriverManager = m::mock(DriverManager::class);
-        $mockDriver = m::mock('alias:' . ElasticsearchDriver::class, DriverContract::class);
-        $mockProvider = m::mock('alias:' . EloquentProvider::class, ProviderContract::class);
+        $mockDriver = m::mock('overload:'.'YourDriver\ElasticsearchDriverClass', DriverContract::class);
+        $mockProvider = m::mock('overload:'.'YourProvider\EloquentProviderClass', ProviderContract::class);
         $mockDriverManager->shouldReceive('getDriver')
             ->times(4)
             ->andReturn($mockDriver);
@@ -74,11 +73,11 @@ class SearchIndexerServiceTest extends TestCase
             );
 
         $searchIndexer = new SearchIndexerService($mockProviderManager, $mockDriverManager);
-        $index = $searchIndexer->indexingModel(User::class);
+        $index = $searchIndexer->indexingModel(UserModel::class);
         $this->assertTrue($index);
 
         //тест ошибки подготовки индекса
-        $index = $searchIndexer->indexingModel(User::class);
+        $index = $searchIndexer->indexingModel(UserModel::class);
         $this->assertFalse($index);
 
 
@@ -97,7 +96,7 @@ class SearchIndexerServiceTest extends TestCase
 
         $mockProviderManager = m::mock(ProviderManager::class);
         $mockDriverManager = m::mock(DriverManager::class);
-        $mockDriver = m::mock('alias:' . ElasticsearchDriver::class, DriverContract::class);
+        $mockDriver = m::mock('overload:'.'YourDriver\ElasticsearchDriverClass', DriverContract::class);
         $mockDriverManager->shouldReceive('getDriver')
             ->times(3)
             ->andReturn($mockDriver);
@@ -129,7 +128,7 @@ class SearchIndexerServiceTest extends TestCase
     {
         $mockProviderManager = m::mock(ProviderManager::class);
         $mockDriverManager = m::mock(DriverManager::class);
-        $mockDriver = m::mock('alias:' . ElasticsearchDriver::class, DriverContract::class);
+        $mockDriver = m::mock('overload:'.'YourDriver\ElasticsearchDriverClass', DriverContract::class);
         $mockDriverManager->shouldReceive('getDriver')
             ->times(2)
             ->andReturn($mockDriver);
