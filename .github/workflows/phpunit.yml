@@ -8,7 +8,9 @@ on:
 
 jobs:
   build:
-
+    strategy:
+      matrix:
+        php-versions: [ '7.4' ]
     runs-on: ubuntu-latest
 
     steps:
@@ -16,6 +18,10 @@ jobs:
 
     - name: Validate composer.json and composer.lock
       run: composer validate
+
+    - uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-versions }}
 
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress --no-suggest
