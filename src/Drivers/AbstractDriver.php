@@ -2,9 +2,10 @@
 
 namespace Shader2k\SearchIndexer\Drivers;
 
+use Shader2k\SearchIndexer\Contracts\Drivers\DriverContract;
 use Shader2k\SearchIndexer\Exceptions\DriverException;
 use Shader2k\SearchIndexer\Helpers\Helper;
-use Shader2k\SearchIndexer\Indexable\IndexableContract;
+use Shader2k\SearchIndexer\Contracts\Indexable\IndexableContract;
 
 abstract class AbstractDriver implements DriverContract
 {

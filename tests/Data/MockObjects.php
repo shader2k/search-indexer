@@ -4,8 +4,8 @@ namespace Shader2k\SearchIndexer\Tests\Data;
 
 use Exception;
 use Shader2k\SearchIndexer\Indexable\IndexableCollection;
-use Shader2k\SearchIndexer\Indexable\IndexableCollectionContract;
-use Shader2k\SearchIndexer\Indexable\IndexableContract;
+use Shader2k\SearchIndexer\Contracts\Indexable\IndexableCollectionContract;
+use Shader2k\SearchIndexer\Contracts\Indexable\IndexableContract;
 
 class MockObjects
 {
@@ -13,7 +13,7 @@ class MockObjects
      * Генерация коллекции
      * @param int $count
      * @param array $fields
-     * @return IndexableCollectionContract
+     * @return \Shader2k\SearchIndexer\Contracts\Indexable\IndexableCollectionContract
      * @throws Exception
      */
     public static function getIndexableCollection(int $count = 1, array $fields = []): IndexableCollectionContract

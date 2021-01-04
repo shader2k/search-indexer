@@ -1,8 +1,8 @@
 <?php
 
+namespace Shader2k\SearchIndexer\Contracts\Indexable;
 
-namespace Shader2k\SearchIndexer\Indexable;
-
+use Shader2k\SearchIndexer\Contracts\Indexable\IndexableContract;
 
 interface IndexableCollectionContract
 {

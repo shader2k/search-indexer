@@ -83,6 +83,11 @@ $index = $indexerService->removeEntity($entity);
 # Расширение пакета
 Возможно расширение пакета за счет дополнительных драйверов для поисковых движков (например Sphinx, Elasticsearch) и провайдеров данных (например Eloquent, Doctrine)  
 
+Расширения можно найти по ссылкам:
+[Драйвера для поисковых машин](https://github.com/shader2k/search-indexer-drivers),
+[Провайдеры данных](https://github.com/shader2k/search-indexer-providers)
+
+
 Добавление драйвера:  
 Необходимо реализовать интерфейс фабрики для драйвера `DriverFactoryContract` и интерфейс драйвера `DriverContract`.
 Добавить новый драйвер в config: 

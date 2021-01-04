@@ -1,8 +1,6 @@
 <?php
 
-
-namespace Shader2k\SearchIndexer\Indexable;
-
+namespace Shader2k\SearchIndexer\Contracts\Indexable;
 
 interface IndexableContract
 {
